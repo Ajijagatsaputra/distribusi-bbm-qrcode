@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,28 +25,30 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
         $user = Auth::user();
+        // dd($user->email, $user->role);
 
-        switch ($user->role) {
-            case 'super_admin':
-                return redirect()->route('superadmin.dashboard');
-
-            case 'admin':
-                return redirect()->route('admin.dashboard');
-
-            case 'operator':
-                return redirect()->route('operator.dashboard');
-
-            default:
-                Auth::logout();
-                return redirect('/login')->withErrors([
-                    'email' => 'Role tidak dikenali.',
-                ]);
-        }
+        return match ($user->role) {
+            'superadmin' => redirect()->route('superadmin.dashboard'),
+            'admin'      => redirect()->route('admin.dashboard'),
+            'operator'   => redirect()->route('operator.dashboard'),
+            default      => $this->logoutWithError(),
+        };
     }
+
+    private function logoutWithError(): RedirectResponse
+    {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return redirect('/login')->withErrors([
+            'email' => 'Role tidak dikenali.',
+        ]);
+    }
+
 
     /**
      * Destroy an authenticated session.

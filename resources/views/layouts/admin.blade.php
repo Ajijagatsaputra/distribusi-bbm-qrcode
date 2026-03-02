@@ -71,6 +71,7 @@
             transform: scale(1.01);
         }
     </style>
+    @stack('styles')
 </head>
 
 <body class="bg-background-light dark:bg-background-dark min-h-screen text-slate-800 dark:text-slate-100 overflow-x-hidden">
@@ -94,5 +95,6 @@
         </main>
     </div>
 
+    @stack('scripts')
 </body>
 </html>

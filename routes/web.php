@@ -58,6 +58,10 @@ Route::middleware(['auth'])->group(function () {
         return view('superadmin.master-data');
     })->name('superadmin.master-data');
 
+    Route::get('/superadmin/live-monitoring', function () {
+        return view('superadmin.live-monitoring');
+    })->name('superadmin.live-monitoring');
+
     Route::get('/superadmin/audit-reports', function () {
         return view('superadmin.audit-reports');
     })->name('superadmin.audit-reports');

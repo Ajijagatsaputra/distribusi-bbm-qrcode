@@ -1,399 +1,593 @@
-<!DOCTYPE html>
-<html class="light" lang="en">
+@extends('layouts.superadmin')
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Master Data Management - BBM System</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#195de6",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#111621",
-                        "sidebar-dark": "#1f2937",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+@section('title', 'Super Admin Dashboard')
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+@section('content')
+<div class="min-h-screen p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 md:p-8">
 
-        [data-tab-content] {
-            display: none;
-        }
+    {{-- ===== HEADER SECTION ===== --}}
+    <div class="mb-8 animate-fade-in">
+        <h1 class="mb-2 text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            Dashboard Super Admin
+        </h1>
+        <p class="text-slate-600">Kelola sistem distribusi BBM secara terpusat</p>
+    </div>
 
-        [data-tab-content].active {
-            display: block;
-        }
-    </style>
-</head>
-
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
-    <div class="flex min-h-screen">
-        <aside class="fixed inset-y-0 left-0 z-50 flex flex-col w-64 text-white bg-sidebar-dark">
-            <div class="flex items-center gap-3 p-6 border-b border-slate-700/50">
-                <div class="bg-primary p-1.5 rounded-lg">
-                    <span class="text-white material-symbols-outlined">local_gas_station</span>
+    {{-- ===== STATISTIK ===== --}}
+    <div class="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border border-blue-100 shadow-sm group hover:shadow-xl hover:-translate-y-1 rounded-2xl">
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 transition-all duration-300 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:scale-110">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">Hari Ini</span>
                 </div>
-                <div>
-                    <h1 class="text-sm font-bold tracking-tight uppercase">BBM QR-Track</h1>
-                    <p class="text-[10px] text-slate-400 uppercase tracking-widest">Super Admin Panel</p>
+                <h3 class="mb-1 text-sm font-medium text-slate-600">Total Distribusi BBM</h3>
+                <p class="text-3xl font-bold text-slate-800">1.248</p>
+                <div class="flex items-center mt-3 text-xs text-emerald-600">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                    <span class="font-semibold">+12.5%</span>
+                    <span class="ml-1 text-slate-500">vs kemarin</span>
                 </div>
             </div>
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="{{ route('superadmin.dashboard') }}">
-                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                    <span class="text-sm font-medium">Dashboard Overview</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined text-[20px]">qr_code_2</span>
-                    <span class="text-sm font-medium">QR Code Management</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="{{ route('superadmin.users-management') }}">
-                    <span class="material-symbols-outlined text-[20px]">group</span>
-                    <span class="text-sm font-medium">User Management</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
-                    <span class="material-symbols-outlined text-[20px]">database</span>
-                    <span class="text-sm font-medium">Master Data</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined text-[20px]">monitoring</span>
-                    <span class="text-sm font-medium">Live Monitoring</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="{{ route('superadmin.audit-reports') }}">
-                    <span class="material-symbols-outlined text-[20px]">description</span>
-                    <span class="text-sm font-medium">Audit Reports</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined text-[20px]">settings</span>
-                    <span class="text-sm font-medium">System Settings</span>
-                </a>
-            </nav>
-            <div class="p-4 border-t border-slate-700/50">
-                <button
-                    class="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                    onclick="event.preventDefault(); document.location.href = '{{ url('/') }}'" type="button">
-                    <span class="material-symbols-outlined text-[20px]">logout</span>
-                    <span class="text-sm font-medium">Logout</span>
+        </div>
+
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-sm group hover:shadow-xl hover:-translate-y-1 border-emerald-100 rounded-2xl">
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 transition-all duration-300 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                        </svg>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full text-emerald-700 bg-emerald-100">Aktif</span>
+                </div>
+                <h3 class="mb-1 text-sm font-medium text-slate-600">QR Code Terdaftar</h3>
+                <p class="text-3xl font-bold text-slate-800">986</p>
+                <div class="flex items-center mt-3 text-xs text-emerald-600">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="font-semibold">100%</span>
+                    <span class="ml-1 text-slate-500">terverifikasi</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-sm group hover:shadow-xl hover:-translate-y-1 border-amber-100 rounded-2xl">
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 transition-all duration-300 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 group-hover:scale-110">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full text-amber-700 bg-amber-100">Master</span>
+                </div>
+                <h3 class="mb-1 text-sm font-medium text-slate-600">Jenis BBM Aktif</h3>
+                <p class="text-3xl font-bold text-slate-800">5</p>
+                <div class="flex items-center mt-3 text-xs text-slate-600">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="ml-1 text-slate-500">dari 6 total jenis</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-sm group hover:shadow-xl hover:-translate-y-1 border-violet-100 rounded-2xl">
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 transition-all duration-300 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 group-hover:scale-110">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full text-violet-700 bg-violet-100">Nasional</span>
+                </div>
+                <h3 class="mb-1 text-sm font-medium text-slate-600">SPBU Terdaftar</h3>
+                <p class="text-3xl font-bold text-slate-800">27</p>
+                <div class="flex items-center mt-3 text-xs text-blue-600">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span class="ml-1 text-slate-500">di 3 kota</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ===== MASTER DATA ===== --}}
+    <div class="mb-6">
+        <h2 class="mb-6 text-xl font-bold text-slate-800">Master Data</h2>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        {{-- MASTER BBM --}}
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-lg group hover:shadow-2xl border-slate-200 rounded-2xl">
+            <div class="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white rounded-lg shadow-sm">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Master Jenis BBM</h3>
+                </div>
+                <button type="button" onclick="openModal('modalBBM')"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 transform rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:scale-105 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Tambah</span>
                 </button>
             </div>
-        </aside>
-        <main class="flex flex-col flex-1 min-h-screen ml-64">
-            <header
-                class="sticky top-0 z-40 flex items-center justify-between h-16 px-8 bg-white border-b dark:bg-background-dark border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-4">
-                    <nav class="flex items-center gap-2 text-sm">
-                        <a class="transition-colors text-slate-500 hover:text-primary" href="#">Main</a>
-                        <span class="text-slate-300">/</span>
-                        <span class="font-semibold text-slate-900 dark:text-white">Master Data</span>
-                    </nav>
-                </div>
-                <div class="flex items-center gap-6">
-                    <div class="relative hidden max-w-md md:block">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
-                        <input
-                            class="w-64 pl-10 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Search Master Data..." type="text" />
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold tracking-wider uppercase bg-slate-50 text-slate-600">
+                            <th class="px-6 py-3 text-left">Nama BBM</th>
+                            <th class="px-6 py-3 text-left">Kode</th>
+                            <th class="px-6 py-3 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="transition-colors hover:bg-blue-50">
+                            <td class="px-6 py-4 font-medium text-slate-800">Pertalite</td>
+                            <td class="px-6 py-4 text-slate-600">
+                                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg">PRTL</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-100 rounded-full">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                    Aktif
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-blue-50">
+                            <td class="px-6 py-4 font-medium text-slate-800">Pertalite</td>
+                            <td class="px-6 py-4 text-slate-600">
+                                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg">PRTL</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-100 rounded-full">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                    Aktif
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-blue-50">
+                            <td class="px-6 py-4 font-medium text-slate-800">Pertamax</td>
+                            <td class="px-6 py-4 text-slate-600">
+                                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg">PRTX</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full text-slate-600 bg-slate-100">
+                                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                    Non Aktif
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-blue-50">
+                            <td class="px-6 py-4 font-medium text-slate-800">Bio Solar</td>
+                            <td class="px-6 py-4 text-slate-600">
+                                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg">BIO</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-100 rounded-full">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                    Aktif
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-4 border-t bg-slate-50 border-slate-200">
+                <p class="text-xs text-slate-500">Total: <span class="font-semibold text-slate-700">4 jenis BBM</span></p>
+            </div>
+        </div>
+
+        {{-- MASTER SPBU --}}
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-lg group hover:shadow-2xl border-slate-200 rounded-2xl">
+            <div class="flex items-center justify-between p-6 border-b bg-gradient-to-r from-emerald-50 to-teal-50 border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white rounded-lg shadow-sm">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
                     </div>
-                    <div class="flex items-center gap-3 pl-6 border-l border-slate-200 dark:border-slate-800">
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-slate-900 dark:text-white">Alex Johnson</p>
-                            <p class="text-[11px] text-slate-500 uppercase font-medium tracking-wider">Super Admin</p>
-                        </div>
-                        <div class="w-10 h-10 bg-cover border-2 rounded-full bg-slate-200 dark:bg-slate-700 border-primary/20"
-                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVsMmElA30a4SFaX8HIJjnqNnM6e3mraHTnJ4lsWfEQYgfdLUcPFOpOU_AgG7OE4KMJ4A8ssHEq-sc2Qb3eGYSDOlFJTQnaRRAHKcae2Jz3bRcDC-TPCXjv_lGpmVq84gxnv-p07GpgU78VxEIqVBIMhNvr2hxNLvPQiLFzDYqfNmD6gWUuEmLTq0RDg6BZeEvhRq-8FELtJ-soXhrpKARbzV5jKwLdjGGGVDQWRSSeBt_M7YqvhyZ5rXGJ2yvFv_gEuzor-S9xg')">
-                        </div>
-                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Master SPBU</h3>
                 </div>
-            </header>
-            <div class="p-8 space-y-6">
-                <div class="flex items-end justify-between">
+                <button type="button" onclick="openModal('modalSPBU')"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 transform rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 hover:scale-105 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Tambah</span>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold tracking-wider uppercase bg-slate-50 text-slate-600">
+                            <th class="px-6 py-3 text-left">Kode SPBU</th>
+                            <th class="px-6 py-3 text-left">Lokasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="transition-colors hover:bg-emerald-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-semibold text-slate-800">34.123.01</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="font-medium text-slate-700">Bandung</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-emerald-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-semibold text-slate-800">34.123.01</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="font-medium text-slate-700">Jakarta</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-emerald-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-semibold text-slate-800">34.123.01</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="font-medium text-slate-700">Semarang</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-4 border-t bg-slate-50 border-slate-200">
+                <p class="text-xs text-slate-500">Total: <span class="font-semibold text-slate-700">3 SPBU</span></p>
+            </div>
+        </div>
+
+        {{-- MASTER KENDARAAN --}}
+        <div class="overflow-hidden transition-all duration-300 transform bg-white border shadow-lg group hover:shadow-2xl border-slate-200 rounded-2xl">
+            <div class="flex items-center justify-between p-6 border-b bg-gradient-to-r from-violet-50 to-purple-50 border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white rounded-lg shadow-sm">
+                        <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Master Kendaraan</h3>
+                </div>
+                <button type="button" onclick="openModal('modalKendaraan')"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 transform rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 hover:scale-105 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Tambah</span>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold tracking-wider uppercase bg-slate-50 text-slate-600">
+                            <th class="px-6 py-3 text-left">Plat Nomor</th>
+                            <th class="px-6 py-3 text-left">Jenis</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="transition-colors hover:bg-violet-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-slate-800">B 1234 ABC</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                    </svg>
+                                    Mobil
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-violet-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-slate-800">B 1234 ABC</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-amber-100 text-amber-700 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    Motor
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-violet-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-slate-800">B 1234 ABC</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-emerald-100 text-emerald-700 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    Truk Kontainer
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-violet-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-slate-800">B 1234 ABC</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                                    </svg>
+                                    Bus
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="transition-colors hover:bg-violet-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-slate-800">B 1234 ABC</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h4a1 1 0 001-1m-6 0h6"/>
+                                    </svg>
+                                    Truk
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-4 border-t bg-slate-50 border-slate-200">
+                <p class="text-xs text-slate-500">Total: <span class="font-semibold text-slate-700">5 kendaraan</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{{-- ================= MODAL BBM ================= --}}
+<div id="modalBBM" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeModal('modalBBM')"></div>
+        <div class="relative w-full max-w-md transition-all transform scale-95 opacity-0 modal-content">
+            <div class="overflow-hidden bg-white shadow-2xl rounded-2xl">
+                <div class="flex items-center gap-3 p-6 text-white bg-gradient-to-r from-blue-600 to-blue-700">
+                    <div class="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold">Tambah Jenis BBM</h3>
+                </div>
+                <div class="p-6 space-y-4">
                     <div>
-                        <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Master Data
-                            Management</h2>
-                        <p class="mt-1 text-sm text-slate-500">Configure and manage SPBU locations and fuel
-                            specifications.</p>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Nama BBM</label>
+                        <input type="text" class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" placeholder="Contoh: Pertalite">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Kode BBM</label>
+                        <input type="text" class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" placeholder="Contoh: PRTL">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Status</label>
+                        <select class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+                            <option>Aktif</option>
+                            <option>Nonaktif</option>
+                        </select>
                     </div>
                 </div>
-                <div
-                    class="overflow-hidden bg-white border shadow-sm dark:bg-background-dark rounded-xl border-slate-200 dark:border-slate-800">
-                    <div class="flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-800">
-                        <div class="flex gap-8">
-                            <button
-                                class="flex items-center gap-2 py-4 text-sm font-bold border-b-2 border-primary text-primary"
-                                onclick="switchTab('spbu-locations')">
-                                <span class="material-symbols-outlined text-[20px]">pin_drop</span>
-                                SPBU Locations
-                            </button>
-                            <button
-                                class="flex items-center gap-2 py-4 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                                onclick="switchTab('fuel-types')">
-                                <span class="material-symbols-outlined text-[20px]">gas_meter</span>
-                                Fuel Types
-                            </button>
-                        </div>
-                        <div class="py-3">
-                            <button
-                                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg bg-primary hover:bg-primary/90"
-                                id="add-btn-spbu">
-                                <span class="material-symbols-outlined text-[18px]">add_location</span>
-                                Add SPBU
-                            </button>
-                            <button
-                                class="flex items-center hidden gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg bg-primary hover:bg-primary/90"
-                                id="add-btn-fuel">
-                                <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                                Add Fuel Type
-                            </button>
-                        </div>
-                    </div>
-                    <div class="active" data-tab-content="" id="spbu-locations">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead>
-                                    <tr
-                                        class="border-b bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800">
-                                        <th class="w-24 px-6 py-4 font-semibold text-slate-900 dark:text-white">ID</th>
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Station Name
-                                        </th>
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Address</th>
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Coordinates
-                                        </th>
-                                        <th class="px-6 py-4 font-semibold text-right text-slate-900 dark:text-white">
-                                            Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                                    <tr>
-                                        <td class="px-6 py-4 font-mono text-xs font-bold text-primary">31.12101</td>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Pertalite
-                                            Station Kuningan</td>
-                                        <td class="px-6 py-4 text-slate-500">Jl. HR Rasuna Said No.10, Jakarta Selatan
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex items-center gap-1.5 px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded">
-                                                <span class="material-symbols-outlined text-[12px]">check_circle</span>
-                                                Linked
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-red-500">
-                                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 font-mono text-xs font-bold text-primary">31.12105</td>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">BBM Center
-                                            Gatot Subroto</td>
-                                        <td class="px-6 py-4 text-slate-500">Jl. Jend. Gatot Subroto Kav 32, Jakarta
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex items-center gap-1.5 px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded">
-                                                <span class="material-symbols-outlined text-[12px]">check_circle</span>
-                                                Linked
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-red-500">
-                                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 font-mono text-xs font-bold text-primary">31.12108</td>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">SPBU Sudirman
-                                            Central</td>
-                                        <td class="px-6 py-4 text-slate-500">Kawasan SCBD Lot 11, Jakarta Pusat</td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">
-                                                <span class="material-symbols-outlined text-[12px]">warning</span>
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-red-500">
-                                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div data-tab-content="" id="fuel-types">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead>
-                                    <tr
-                                        class="border-b bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800">
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Fuel Name
-                                        </th>
-                                        <th class="px-6 py-4 font-semibold text-right text-slate-900 dark:text-white">
-                                            Price per Liter (IDR)</th>
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Status</th>
-                                        <th class="px-6 py-4 font-semibold text-slate-900 dark:text-white">Last Updated
-                                        </th>
-                                        <th class="px-6 py-4 font-semibold text-right text-slate-900 dark:text-white">
-                                            Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                                    <tr>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Pertalite</td>
-                                        <td class="px-6 py-4 font-mono text-right text-slate-700 dark:text-slate-300">
-                                            10,000.00</td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Available</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-slate-500">2 days ago</td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Pertamax</td>
-                                        <td class="px-6 py-4 font-mono text-right text-slate-700 dark:text-slate-300">
-                                            12,950.00</td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Available</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-slate-500">1 week ago</td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Bio Solar</td>
-                                        <td class="px-6 py-4 font-mono text-right text-slate-700 dark:text-slate-300">
-                                            6,800.00</td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Available</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-slate-500">3 days ago</td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Pertamax Turbo
-                                        </td>
-                                        <td class="px-6 py-4 font-mono text-right text-slate-700 dark:text-slate-300">
-                                            14,400.00</td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="px-2 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded">Inactive</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-slate-500">1 month ago</td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="mx-2 transition-colors text-slate-400 hover:text-primary">
-                                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
-                        <p class="text-xs font-medium tracking-tight text-slate-500">Showing 1-10 of 24 records</p>
-                        <div class="flex gap-1">
-                            <button
-                                class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50">
-                                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                            </button>
-                            <button
-                                class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50">
-                                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="flex gap-3 p-6 border-t bg-slate-50 border-slate-200">
+                    <button onclick="closeModal('modalBBM')" class="flex-1 px-4 py-3 font-semibold transition-all border-2 rounded-xl text-slate-700 border-slate-300 hover:bg-slate-100">
+                        Batal
+                    </button>
+                    <button class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition-all shadow-lg rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Simpan
+                    </button>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-    <script>
-        function switchTab(tabId) {
-            // Update content visibility
-            document.querySelectorAll('[data-tab-content]').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-            // Update button styles
-            const buttons = document.querySelectorAll('.flex.gap-8 button');
-            buttons.forEach(btn => {
-                btn.classList.remove('border-primary', 'text-primary', 'font-bold');
-                btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
-            });
-            const activeBtn = event.currentTarget;
-            activeBtn.classList.add('border-primary', 'text-primary', 'font-bold');
-            activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-medium');
-            // Update Action Button
-            if (tabId === 'spbu-locations') {
-                document.getElementById('add-btn-spbu').classList.remove('hidden');
-                document.getElementById('add-btn-fuel').classList.add('hidden');
-            } else {
-                document.getElementById('add-btn-spbu').classList.add('hidden');
-                document.getElementById('add-btn-fuel').classList.remove('hidden');
-            }
-        }
-    </script>
+</div>
 
-</body>
+{{-- ================= MODAL SPBU ================= --}}
+<div id="modalSPBU" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeModal('modalSPBU')"></div>
+        <div class="relative w-full max-w-md transition-all transform scale-95 opacity-0 modal-content">
+            <div class="overflow-hidden bg-white shadow-2xl rounded-2xl">
+                <div class="flex items-center gap-3 p-6 text-white bg-gradient-to-r from-emerald-600 to-emerald-700">
+                    <div class="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold">Tambah SPBU</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Kode SPBU</label>
+                        <input type="text" class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Contoh: 34.123.01">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Lokasi</label>
+                        <input type="text" class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Contoh: Bandung">
+                    </div>
+                </div>
+                <div class="flex gap-3 p-6 border-t bg-slate-50 border-slate-200">
+                    <button onclick="closeModal('modalSPBU')" class="flex-1 px-4 py-3 font-semibold transition-all border-2 rounded-xl text-slate-700 border-slate-300 hover:bg-slate-100">
+                        Batal
+                    </button>
+                    <button class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition-all shadow-lg rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 hover:shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-</html>
+{{-- ================= MODAL KENDARAAN ================= --}}
+<div id="modalKendaraan" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeModal('modalKendaraan')"></div>
+        <div class="relative w-full max-w-md transition-all transform scale-95 opacity-0 modal-content">
+            <div class="overflow-hidden bg-white shadow-2xl rounded-2xl">
+                <div class="flex items-center gap-3 p-6 text-white bg-gradient-to-r from-violet-600 to-violet-700">
+                    <div class="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold">Tambah Kendaraan</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Plat Nomor</label>
+                        <input type="text" class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-violet-500 focus:ring-4 focus:ring-violet-100" placeholder="Contoh: B 1234 ABC">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700">Jenis Kendaraan</label>
+                        <select class="w-full px-4 py-3 transition-all border outline-none rounded-xl border-slate-300 focus:border-violet-500 focus:ring-4 focus:ring-violet-100">
+                            <option>Motor</option>
+                            <option>Mobil</option>
+                            <option>Truk Kontainer</option>
+                            <option>Bus</option>
+                            <option>Truk</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3 p-6 border-t bg-slate-50 border-slate-200">
+                    <button onclick="closeModal('modalKendaraan')" class="flex-1 px-4 py-3 font-semibold transition-all border-2 rounded-xl text-slate-700 border-slate-300 hover:bg-slate-100">
+                        Batal
+                    </button>
+                    <button class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition-all shadow-lg rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 hover:shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ================= SCRIPT ================= --}}
+<style>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+}
+
+@keyframes modal-show {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-show {
+    animation: modal-show 0.3s ease-out forwards;
+}
+</style>
+
+<script>
+function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Trigger animation
+    setTimeout(() => {
+        const content = modal.querySelector('.modal-content');
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('modal-show');
+    }, 10);
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    const content = modal.querySelector('.modal-content');
+
+    content.classList.remove('modal-show');
+    content.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }, 200);
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        ['modalBBM','modalSPBU','modalKendaraan'].forEach(id => {
+            const m = document.getElementById(id);
+            if (m && !m.classList.contains('hidden')) closeModal(id);
+        });
+    }
+});
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('bg-black/60')) {
+        ['modalBBM','modalSPBU','modalKendaraan'].forEach(id => {
+            const m = document.getElementById(id);
+            if (m && !m.classList.contains('hidden')) closeModal(id);
+        });
+    }
+});
+</script>
+@endsection

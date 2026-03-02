@@ -45,6 +45,11 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
 
+ Route::get('/superadmin/qr-code-management', function () {
+        return view('superadmin.qr-code-management');
+    })->name('superadmin.qr-code-management');
+
+
     Route::get('/superadmin/users-management', function () {
         return view('superadmin.users-management');
     })->name('superadmin.users-management');
@@ -72,6 +77,13 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.profile');
     })->name('admin.profile');
 });
+Route::prefix('operator')->name('operator.')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', fn() => view('operator.dashboard'))->name('dashboard');
+    Route::get('/input-distribution', fn() => view('operator.input-distribution'))->name('input-distribution');
+    Route::get('/history', fn() => view('operator.history'))->name('history');
+    Route::get('/profile', fn() => view('operator.profile'))->name('profile');
+});
+
 
 
 require __DIR__ . '/auth.php';

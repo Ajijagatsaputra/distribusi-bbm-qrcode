@@ -1,319 +1,208 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
-
+<html class="light" lang="en" style="scroll-behavior: smooth;">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Operator Distribution History</title>
+    <title>Pertamina - Riwayat Distribusi</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#195de6",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#111621",
+                        "pertamina-blue": "#005eb8",
+                        "pertamina-red": "#ed161f",
+                        "pertamina-green": "#7abb3a",
+                        "background-light": "#f4f7fb",
+                        "background-dark": "#0f172a",
                     },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
+                    fontFamily: { "sans": ["Outfit", "sans-serif"] },
+                    boxShadow: { 'glass': '0 8px 32px 0 rgba(0, 94, 184, 0.05)' },
                 },
             },
         }
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+        body { font-family: 'Outfit', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .input-glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); }
+        .input-glass:focus { border-color: #005eb8; box-shadow: 0 0 0 3px rgba(0, 94, 184, 0.1); outline: none; }
+        .gradient-text { background: linear-gradient(135deg, #005eb8, #0099ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-
-<body class="bg-background-light dark:bg-background-dark min-h-screen text-[#111318] dark:text-white">
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-slate-800 dark:text-slate-100 overflow-x-hidden">
+    <div class="fixed top-0 right-0 w-[50%] h-[50%] rounded-bl-full bg-pertamina-blue/5 blur-[100px] pointer-events-none -z-10"></div>
     <div class="flex min-h-screen">
-        <aside
-            class="w-72 bg-white dark:bg-[#1a202c] border-r border-[#dcdfe5] dark:border-slate-800 flex flex-col fixed h-full z-20">
-            <div class="flex flex-col h-full p-6">
-                <div class="flex items-center gap-3 mb-10">
-                    <div class="flex items-center justify-center text-white rounded-lg bg-primary size-10">
-                        <span class="material-symbols-outlined">local_gas_station</span>
+        <!-- Sidebar -->
+        <aside class="w-72 glass-panel border-r border-slate-200/50 flex flex-col fixed h-full z-20">
+            <div class="flex flex-col h-full px-6 py-8">
+                <!-- Brand -->
+                <div class="flex items-center gap-4 mb-12 px-2">
+                    <div class="flex items-center justify-center text-white rounded-xl bg-gradient-to-br from-pertamina-blue to-blue-700 size-12 shrink-0">
+                        <span class="material-symbols-outlined text-2xl">local_gas_station</span>
                     </div>
                     <div class="flex flex-col">
-                        <h1 class="text-[#111318] dark:text-white text-base font-bold leading-tight">BBM Distribusi</h1>
-                        <p class="text-[#636f88] dark:text-slate-400 text-xs font-medium">Operator Portal</p>
+                        <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900">BBM<span class="text-pertamina-red">Distribusi</span></h1>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Operator Portal</p>
                     </div>
                 </div>
-                <nav class="flex flex-col flex-1 gap-1">
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#636f88] dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        href="{{ route('operator.dashboard') }}">
-                        <span class="material-symbols-outlined">dashboard</span>
-                        <span class="text-sm font-medium">Dashboard</span>
+
+                <!-- Nav -->
+                <nav class="flex flex-col flex-1 gap-2">
+                    <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:text-pertamina-blue hover:bg-white/50 font-medium transition-all group" href="{{ route('operator.dashboard') ?? '#' }}">
+                        <span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span><span class="text-sm">Dashboard Overview</span>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#636f88] dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        href="{{ route('operator.input-distribution') }}">
-                        <span class="material-symbols-outlined">add_box</span>
-                        <span class="text-sm font-medium">Input Distribution Data</span>
+                    <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:text-pertamina-blue hover:bg-white/50 font-medium transition-all group" href="{{ route('operator.input-distribution') ?? '#' }}">
+                        <span class="material-symbols-outlined group-hover:scale-110 transition-transform">qr_code_scanner</span><span class="text-sm">Scan &amp; Input Data</span>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary" href="#">
-                        <span class="material-symbols-outlined">history</span>
-                        <span class="text-sm font-semibold">History</span>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#636f88] dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        href="#">
-                        <span class="material-symbols-outlined">person</span>
-                        <span class="text-sm font-medium">Profile</span>
+                    <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-pertamina-blue/10 text-pertamina-blue font-bold transition-all relative group" href="{{ route('operator.history') ?? '#' }}">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-pertamina-blue rounded-r-full"></div>
+                        <span class="material-symbols-outlined">history</span><span class="text-sm">Distribution Log</span>
                     </a>
                 </nav>
-                <div class="mt-auto pt-6 border-t border-[#dcdfe5] dark:border-slate-800">
-                    <div class="flex items-center gap-3 px-2 mb-4">
-                        <div class="bg-center bg-cover rounded-full size-8 bg-slate-200"
-                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVgNo_uorxd8rjNHT77G2jaGK89g4eZ7rclYVsqYDUNjUmZJeTn4QLIhx_vZKylilj5wqxMEqwvcKzRCzoMPYvGHDt2iP0tzxZN1aA6hYwEW83KumfMERF7kVF8oE6HFq0R5Gx17q2gpf_4HB01t_utrO5i7wC_DTNyA59sHB4B34_6aheXei2mphjT9FkVdz5F1xdRfyqKGhmgl-25Ce3K0w_2A-ibC5AFR0N7zWaIDbNiaq44weYdy3q-ZpHQbVbsw1tSMaWrw')">
+
+                <!-- Profile -->
+                <div class="mt-auto pt-8">
+                    <div class="glass-panel rounded-2xl p-4 flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <img src="https://ui-avatars.com/api/?name=Ahmad+Fauzi&amp;background=005eb8&amp;color=fff" class="rounded-full size-10 border-2 border-white" />
+                            <div class="flex flex-col overflow-hidden">
+                                <p class="text-sm font-bold text-slate-900 truncate">Ahmad Fauzi</p>
+                            </div>
                         </div>
-                        <div class="flex flex-col overflow-hidden">
-                            <p class="text-sm font-bold truncate">Ahmad Fauzi</p>
-                            <p class="text-xs text-[#636f88] dark:text-slate-400">Station 04 - Bandung</p>
-                        </div>
+                        <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-pertamina-red hover:bg-pertamina-red hover:text-white font-semibold transition-all border border-pertamina-red/20 shadow-sm" onclick="event.preventDefault(); document.location.href = '{{ url('/') }}'" type="button">
+                            <span class="material-symbols-outlined text-sm">logout</span>
+                            <span class="text-sm">Sign Out</span>
+                        </button>
                     </div>
-                     <button
-                        class="flex items-center w-full gap-3 px-4 py-3 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10"
-                        onclick="event.preventDefault(); document.location.href = '{{ url('/') }}'" type="button">
-                        <a href="{{ url('/') }}"></a>
-                        <span class="material-symbols-outlined">logout</span>
-                        <span class="text-sm font-semibold">Logout</span>
-                    </button>
                 </div>
             </div>
         </aside>
+
+        <!-- Main Content -->
         <main class="flex-1 ml-72">
-            <div class="max-w-[1200px] mx-auto p-8">
-                <div class="mb-8">
-                    <h1 class="text-[#111318] dark:text-white text-3xl font-black leading-tight tracking-tight mb-2">
-                        Distribution History</h1>
-                    <p class="text-[#636f88] dark:text-slate-400 text-base font-normal">View and audit all past fuel
-                        distribution logs recorded from this station.</p>
+            <div class="max-w-[1200px] mx-auto p-10">
+                <div class="flex items-end justify-between mb-10">
+                    <div>
+                        <h2 class="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Riwayat <span class="gradient-text">Log Distribusi</span></h2>
+                        <p class="text-slate-500 font-medium text-lg">Laporan detail seluruh aktivitas pengiriman BBM dari stasiun operator.</p>
+                    </div>
+                    <button class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 hover:border-pertamina-blue hover:text-pertamina-blue rounded-xl font-bold text-slate-600 transition-all shadow-sm">
+                        <span class="material-symbols-outlined">download</span> Ekspor Laporan
+                    </button>
                 </div>
-                <div
-                    class="bg-white dark:bg-[#1a202c] border border-[#dcdfe5] dark:border-slate-800 rounded-xl p-5 mb-6 flex flex-wrap items-center justify-between gap-4 shadow-sm">
-                    <div class="flex flex-wrap items-center flex-1 gap-4">
+
+                <!-- Filters -->
+                <div class="glass-panel p-6 rounded-3xl shadow-glass mb-8 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex items-center gap-4 flex-1">
                         <div class="relative w-full max-w-sm">
-                            <span
-                                class="absolute text-lg -translate-y-1/2 material-symbols-outlined left-3 top-1/2 text-slate-400">search</span>
-                            <input
-                                class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border-[#dcdfe5] dark:border-slate-800 rounded-lg text-sm focus:ring-primary focus:border-primary transition-all"
-                                placeholder="Search by vehicle ID or destination..." type="text" />
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+                            <input type="text" placeholder="Cari No. Polisi atau Tujuan..." class="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-slate-200 outline-none focus:border-pertamina-blue focus:ring-4 focus:ring-pertamina-blue/10 transition-all" />
                         </div>
-                        <div
-                            class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border border-[#dcdfe5] dark:border-slate-800 rounded-lg px-3 py-2">
-                            <span class="text-lg material-symbols-outlined text-slate-400">calendar_today</span>
-                            <input class="p-0 text-sm bg-transparent border-none focus:ring-0 dark:text-white"
-                                type="date" />
-                            <span class="text-xs text-slate-400">to</span>
-                            <input class="p-0 text-sm bg-transparent border-none focus:ring-0 dark:text-white"
-                                type="date" />
+                        <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 h-12">
+                            <span class="material-symbols-outlined text-slate-400">calendar_month</span>
+                            <span class="text-slate-600 font-medium text-sm">Hari ini, 23 Okt</span>
+                            <span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-pertamina-blue transition-colors">arrow_drop_down</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            class="flex items-center gap-2 px-4 py-2 border border-[#dcdfe5] dark:border-slate-800 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <span class="text-lg material-symbols-outlined">filter_list</span>
-                            Filter
-                        </button>
-                        <button
-                            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg bg-slate-900 dark:bg-slate-700 hover:bg-black">
-                            <span class="text-lg material-symbols-outlined">download</span>
-                            Export
-                        </button>
-                    </div>
+                    <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold transition-colors">
+                        <span class="material-symbols-outlined">filter_list</span> Filter Lanjutan
+                    </button>
                 </div>
-                <div
-                    class="bg-white dark:bg-[#1a202c] border border-[#dcdfe5] dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead
-                                class="bg-slate-50 dark:bg-slate-800/50 border-b border-[#dcdfe5] dark:border-slate-800">
-                                <tr>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Date &amp; Time</th>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Vehicle ID</th>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Fuel Type</th>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Volume (L)</th>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Destination</th>
-                                    <th
-                                        class="px-6 py-4 text-[#636f88] dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                        Status</th>
-                                    <th class="px-6 py-4 text-right"></th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-[#dcdfe5] dark:divide-slate-800">
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 23, 2023</div>
-                                        <div class="text-xs text-[#636f88]">14:45 PM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">D 1234 ABC</td>
-                                    <td class="px-6 py-4 text-sm">Pertalite</td>
-                                    <td class="px-6 py-4 text-sm font-bold">250.00</td>
-                                    <td class="px-6 py-4 text-sm">Depot Siliwangi</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Success</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 23, 2023</div>
-                                        <div class="text-xs text-[#636f88]">13:10 PM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">B 9876 XYZ</td>
-                                    <td class="px-6 py-4 text-sm">Pertamax</td>
-                                    <td class="px-6 py-4 text-sm font-bold">45.50</td>
-                                    <td class="px-6 py-4 text-sm">SPBU Pasteur</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Success</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 23, 2023</div>
-                                        <div class="text-xs text-[#636f88]">11:55 AM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">D 4455 DEF</td>
-                                    <td class="px-6 py-4 text-sm">Solar</td>
-                                    <td class="px-6 py-4 text-sm font-bold">1,200.00</td>
-                                    <td class="px-6 py-4 text-sm">Logistics Center A</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">Pending</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 23, 2023</div>
-                                        <div class="text-xs text-[#636f88]">10:20 AM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">Z 1122 GHI</td>
-                                    <td class="px-6 py-4 text-sm">Pertalite</td>
-                                    <td class="px-6 py-4 text-sm font-bold">30.00</td>
-                                    <td class="px-6 py-4 text-sm">Main Hub</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Success</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 23, 2023</div>
-                                        <div class="text-xs text-[#636f88]">09:15 AM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">F 5566 JKL</td>
-                                    <td class="px-6 py-4 text-sm">Pertamax Turbo</td>
-                                    <td class="px-6 py-4 text-sm font-bold">120.00</td>
-                                    <td class="px-6 py-4 text-sm">Emergency Services</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Failed</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                                <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold">Oct 22, 2023</div>
-                                        <div class="text-xs text-[#636f88]">17:30 PM</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold">D 8888 JKL</td>
-                                    <td class="px-6 py-4 text-sm">Pertamax Turbo</td>
-                                    <td class="px-6 py-4 text-sm font-bold">60.00</td>
-                                    <td class="px-6 py-4 text-sm">SPBU Buah Batu</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Success</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button class="text-[#636f88] hover:text-primary transition-colors"><span
-                                                class="material-symbols-outlined">more_horiz</span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div
-                        class="px-6 py-4 bg-slate-50 dark:bg-slate-800/30 border-t border-[#dcdfe5] dark:border-slate-800 flex items-center justify-between">
-                        <p class="text-sm text-[#636f88] dark:text-slate-400 font-medium">
-                            Showing <span class="text-[#111318] dark:text-white">1</span> to <span
-                                class="text-[#111318] dark:text-white">6</span> of <span
-                                class="text-[#111318] dark:text-white">124</span> results
-                        </p>
-                        <div class="flex items-center gap-2">
-                            <button
-                                class="p-2 border border-[#dcdfe5] dark:border-slate-800 rounded-lg hover:bg-white dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                disabled="">
-                                <span class="material-symbols-outlined">chevron_left</span>
-                            </button>
-                            <button
-                                class="flex items-center justify-center text-sm font-bold text-white rounded-lg size-9 bg-primary">1</button>
-                            <button
-                                class="flex items-center justify-center text-sm font-medium rounded-lg size-9 hover:bg-slate-200 dark:hover:bg-slate-800">2</button>
-                            <button
-                                class="flex items-center justify-center text-sm font-medium rounded-lg size-9 hover:bg-slate-200 dark:hover:bg-slate-800">3</button>
-                            <span class="px-2">...</span>
-                            <button
-                                class="flex items-center justify-center text-sm font-medium rounded-lg size-9 hover:bg-slate-200 dark:hover:bg-slate-800">12</button>
-                            <button
-                                class="p-2 border border-[#dcdfe5] dark:border-slate-800 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors">
-                                <span class="material-symbols-outlined">chevron_right</span>
-                            </button>
+
+                <!-- Table -->
+                <div class="glass-panel rounded-3xl shadow-glass overflow-hidden border border-white/50">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80">
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Tanggal &amp; Waktu</th>
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">No. Polisi</th>
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Produk BBM</th>
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Volume (L)</th>
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Tujuan</th>
+                                <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200/50 bg-white/40">
+                            <tr class="hover:bg-white/80 transition-colors">
+                                <td class="px-6 py-5">
+                                    <p class="text-sm font-bold text-slate-900">23 Okt 2023</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">14:45 WIB</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                                        <span class="text-sm font-bold tracking-widest text-slate-800">D 1234 ABC</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 font-semibold text-slate-700">Pertalite</td>
+                                <td class="px-6 py-5 font-extrabold text-slate-900">250.00</td>
+                                <td class="px-6 py-5 font-medium text-slate-600">Depot Siliwangi</td>
+                                <td class="px-6 py-5">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pertamina-green/10 text-pertamina-green text-xs font-bold border border-pertamina-green/20">
+                                        <span class="material-symbols-outlined text-[14px]">check_circle</span> Selesai
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/80 transition-colors">
+                                <td class="px-6 py-5">
+                                    <p class="text-sm font-bold text-slate-900">23 Okt 2023</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">11:55 WIB</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                                        <span class="text-sm font-bold tracking-widest text-slate-800">D 4455 DEF</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 font-semibold text-slate-700">Biosolar</td>
+                                <td class="px-6 py-5 font-extrabold text-slate-900">16,000.00</td>
+                                <td class="px-6 py-5 font-medium text-slate-600">Logistics Center A</td>
+                                <td class="px-6 py-5">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold border border-amber-500/20">
+                                        <span class="material-symbols-outlined text-[14px] animate-spin">sync</span> Dalam Proses
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/80 transition-colors">
+                                <td class="px-6 py-5">
+                                    <p class="text-sm font-bold text-slate-900">23 Okt 2023</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">09:15 WIB</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                                        <span class="text-sm font-bold tracking-widest text-slate-800">F 5566 JKL</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 font-semibold text-slate-700">Pertamax Turbo</td>
+                                <td class="px-6 py-5 font-extrabold text-slate-900">120.00</td>
+                                <td class="px-6 py-5 font-medium text-slate-600">Emergency Services</td>
+                                <td class="px-6 py-5">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pertamina-red/10 text-pertamina-red text-xs font-bold border border-pertamina-red/20">
+                                        <span class="material-symbols-outlined text-[14px]">error</span> Dibatalkan
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 bg-slate-50/80 border-t border-slate-200/50 flex items-center justify-between">
+                        <p class="text-sm text-slate-500 font-medium">Menampilkan <span class="font-bold text-slate-900">1-3</span> dari <span class="font-bold text-slate-900">124</span> data</p>
+                        <div class="flex gap-2">
+                            <button class="size-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 bg-white" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+                            <button class="size-9 flex items-center justify-center rounded-lg bg-pertamina-blue text-white font-bold shadow-glow-blue">1</button>
+                            <button class="size-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 font-bold transition-colors">2</button>
+                            <button class="size-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 font-bold transition-colors">3</button>
+                            <button class="size-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
-
 </body>
-
 </html>

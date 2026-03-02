@@ -11,15 +11,15 @@
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
             <div class="relative z-10 flex flex-col justify-between w-full p-16">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-white/10 backdrop-blur-md rounded-xl">
+                    {{-- <div class="p-2 bg-white/10 backdrop-blur-md rounded-xl">
                         <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 48 48"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.0664 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"
                                 fill="currentColor"></path>
                         </svg>
-                    </div>
-                    <span class="text-xl font-bold tracking-tight text-white">FuelSystem v2.4</span>
+                    </div> --}}
+                    {{-- <span class="text-xl font-bold tracking-tight text-white">FuelSystem v2.4</span> --}}
                 </div>
                 <div class="max-w-xl">
                     <h1 class="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white">
@@ -32,7 +32,7 @@
                     </p>
                 </div>
                 <div class="text-sm text-slate-400">
-                    © 2024 Enterprise Fuel Distribution System • Internal Access Only
+                    © 2025 Enterprise Fuel Distribution System • Internal Access Only
                 </div>
             </div>
         </div>

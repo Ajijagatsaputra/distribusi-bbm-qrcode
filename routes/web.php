@@ -14,9 +14,7 @@ Route::get('/', fn() => redirect()->route('login'));
 // ─── SUPERADMIN ──────────────────────────────────────────────────────────────
 Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('superadmin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DistributionController::class, 'superadminDashboard'])->name('dashboard');
 
     // Users management
     Route::get('/users-management', [UserController::class, 'index'])->name('users-management');

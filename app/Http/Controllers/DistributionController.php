@@ -240,5 +240,21 @@ class DistributionController extends Controller
 
         return view('operator.dashboard', compact('totalShipments', 'totalVolume', 'activeSuratJalan', 'recentDistributions'));
     }
+
+    /** Superadmin Dashboard */
+    public function superadminDashboard()
+    {
+        $totalSpbu = Spbu::where('status', 'aktif')->count();
+        $todayVolumeLiter = Distribution::whereDate('distributed_at', today())->where('status', 'selesai')->sum('volume_liter');
+        $todayVolumeKl = $todayVolumeLiter / 1000;
+        $activeQr = QrCode::where('status', 'aktif')->count();
+
+        $recentDistributions = Distribution::with(['spbu', 'fuelType', 'qrCode'])
+            ->latest('distributed_at')
+            ->limit(5)
+            ->get();
+
+        return view('superadmin.dashboard', compact('totalSpbu', 'todayVolumeKl', 'activeQr', 'recentDistributions'));
+    }
 }
 

@@ -44,6 +44,19 @@
         <span id="toastMessage">Action successful!</span>
     </div>
 
+    @if(session('success'))
+        <div class="mb-6 flex items-center gap-3 px-4 py-3 bg-pertamina-green/10 border border-pertamina-green/30 rounded-xl text-pertamina-green font-semibold text-sm">
+            <span class="material-symbols-outlined">check_circle</span>
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="mb-6 flex items-center gap-3 px-4 py-3 bg-pertamina-red/10 border border-pertamina-red/30 rounded-xl text-pertamina-red font-semibold text-sm">
+            <span class="material-symbols-outlined">error</span>
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- ROLE EXPLANATION (Moved up for better UX flow) --}}
     <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
         <div class="p-6 transition-all duration-300 bg-white border shadow-sm border-slate-200/60 rounded-2xl dark:bg-slate-800 dark:border-slate-700/50 hover:shadow-md">
@@ -51,7 +64,7 @@
                 <div class="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
                     <span class="material-symbols-outlined">shield_person</span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white">Super Admin (<span id="count-sa">1</span>)</h4>
+                <h4 class="font-bold text-slate-900 dark:text-white">Super Admin (<span id="count-sa">{{ $stats['admin_pusat'] }}</span>)</h4>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">Akses tak terbatas. Sistem konfigurasi, Master Data, Audit Log, Manajemen User.</p>
         </div>
@@ -61,7 +74,7 @@
                 <div class="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                     <span class="material-symbols-outlined">manage_accounts</span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white">Admin (<span id="count-a">1</span>)</h4>
+                <h4 class="font-bold text-slate-900 dark:text-white">Admin (<span id="count-a">{{ $stats['admin_depo'] }}</span>)</h4>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">Kontrol wilayah manajemen. Kelola QR Code operasional, Reports wilayah.</p>
         </div>
@@ -71,7 +84,7 @@
                 <div class="p-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                     <span class="material-symbols-outlined">engineering</span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white">Operator (<span id="count-o">1</span>)</h4>
+                <h4 class="font-bold text-slate-900 dark:text-white">Operator (<span id="count-o">{{ $stats['driver'] }}</span>)</h4>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">Akses khusus lapangan (SPBU/Terminal). Pemindaian QR, validasi & riwayat.</p>
         </div>
@@ -84,7 +97,7 @@
             <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 dark:text-white">Daftar Akun Sistem</h4>
                 <div class="flex gap-2 text-xs font-semibold text-slate-500">
-                    Total: <span id="displayCount" class="text-pertamina-blue">3</span> Users
+                    Total: <span id="displayCount" class="text-pertamina-blue">{{ $stats['total'] }}</span> Users
                 </div>
             </div>
         </div>
@@ -102,133 +115,75 @@
                 </thead>
 
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-
-                    {{-- SUPER ADMIN --}}
-                    <tr class="transition-colors table-row hover:bg-slate-50 dark:hover:bg-slate-800/30" data-role="superadmin" id="row-u1">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white bg-purple-600 rounded-full">
-                                        AJ
+                    @forelse($users as $u)
+                        @php
+                            $roleName = 'Operator';
+                            $roleClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50';
+                            $avatarBg = 'bg-pertamina-green';
+                            $roleData = 'driver';
+                            if ($u->role === 'admin_pusat') {
+                                $roleName = 'Super Admin';
+                                $roleClass = 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50';
+                                $avatarBg = 'bg-purple-600';
+                                $roleData = 'admin_pusat';
+                            } elseif ($u->role === 'admin_depo') {
+                                $roleName = 'Admin';
+                                $roleClass = 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50';
+                                $avatarBg = 'bg-pertamina-blue';
+                                $roleData = 'admin_depo';
+                            }
+                            
+                            $initials = collect(explode(' ', $u->name))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->join('');
+                        @endphp
+                        <tr class="transition-colors table-row hover:bg-slate-50 dark:hover:bg-slate-800/30" data-role="{{ $roleData }}" id="row-{{ $u->id }}">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="relative">
+                                        <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full {{ $avatarBg }}">
+                                            {{ strtoupper($initials) }}
+                                        </div>
+                                        <div class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full {{ $u->is_active ? 'bg-emerald-500' : 'bg-slate-300' }} dark:border-slate-800"></div>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-emerald-500 dark:border-slate-800"></div>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-900 dark:text-white name-cell">Alex Johnson</p>
-                                    <p class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">#SA001</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <p class="font-medium text-slate-600 dark:text-slate-400 email-cell">alex.j@pertamina.com</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50 role-cell">
-                                Super Admin
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" checked class="sr-only peer status-toggle">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pertamina-green"></div>
-                            </label>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button onclick="openUserModal('edit', 'u1')" class="p-2 transition rounded-lg text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">edit</span>
-                                </button>
-                                <button onclick="openDeleteUserModal('u1')" class="p-2 transition rounded-lg text-pertamina-red hover:bg-pertamina-red/10 dark:hover:bg-red-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {{-- ADMIN --}}
-                    <tr class="transition-colors table-row hover:bg-slate-50 dark:hover:bg-slate-800/30" data-role="admin" id="row-u2">
-                         <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full bg-pertamina-blue">
-                                        DP
+                                    <div>
+                                        <p class="font-bold text-slate-900 dark:text-white name-cell">{{ $u->name }}</p>
+                                        <p class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">#{{ strtoupper(substr($u->role, 0, 2)) . str_pad($u->id, 3, '0', STR_PAD_LEFT) }}</p>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-emerald-500 dark:border-slate-800"></div>
                                 </div>
-                                <div>
-                                    <p class="font-bold text-slate-900 dark:text-white name-cell">Daniel Pratama</p>
-                                    <p class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">#AD015</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="font-medium text-slate-600 dark:text-slate-400 email-cell">{{ $u->email }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full {{ $roleClass }} role-cell">
+                                    {{ $roleName }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" {{ $u->is_active ? 'checked' : '' }} onchange="toggleUserActiveStatus({{ $u->id }})" class="sr-only peer status-toggle">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pertamina-green"></div>
+                                </label>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button onclick="openUserModal('edit', '{{ $u->id }}')" class="p-2 transition rounded-lg text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-900/20 group hover:scale-110">
+                                        <span class="text-lg material-symbols-outlined">edit</span>
+                                    </button>
+                                    @if($u->id !== auth()->id())
+                                        <button onclick="openDeleteUserModal('{{ $u->id }}')" class="p-2 transition rounded-lg text-pertamina-red hover:bg-pertamina-red/10 dark:hover:bg-red-900/20 group hover:scale-110">
+                                            <span class="text-lg material-symbols-outlined">delete</span>
+                                        </button>
+                                    @endif
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <p class="font-medium text-slate-600 dark:text-slate-400 email-cell">daniel.p@pertamina.com</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 role-cell">
-                                Admin
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" checked class="sr-only peer status-toggle">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pertamina-green"></div>
-                            </label>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                           <div class="flex items-center justify-end gap-2">
-                                <button onclick="openUserModal('edit', 'u2')" class="p-2 transition rounded-lg text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">edit</span>
-                                </button>
-                                <button onclick="openDeleteUserModal('u2')" class="p-2 transition rounded-lg text-pertamina-red hover:bg-pertamina-red/10 dark:hover:bg-red-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {{-- OPERATOR --}}
-                    <tr class="transition-colors table-row hover:bg-slate-50 dark:hover:bg-slate-800/30" data-role="operator" id="row-u3">
-                         <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="flex items-center justify-center w-10 h-10 text-sm font-bold text-white rounded-full bg-pertamina-green">
-                                        BK
-                                    </div>
-                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-slate-300 border-2 border-white rounded-full dark:border-slate-800"></div>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-900 dark:text-white name-cell">Budi Kusuma</p>
-                                    <p class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">#OP082</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                           <p class="font-medium text-slate-600 dark:text-slate-400 email-cell">budi.k@field.pertamina.com</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 role-cell">
-                                Operator
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer status-toggle">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pertamina-green"></div>
-                            </label>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button onclick="openUserModal('edit', 'u3')" class="p-2 transition rounded-lg text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">edit</span>
-                                </button>
-                                <button onclick="openDeleteUserModal('u3')" class="p-2 transition rounded-lg text-pertamina-red hover:bg-pertamina-red/10 dark:hover:bg-red-900/20 group hover:scale-110">
-                                    <span class="text-lg material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-slate-500 font-medium">
+                                Belum ada data pengguna.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -259,32 +214,33 @@
             </div>
 
             <div class="px-6 py-6">
-                <form id="userForm" class="space-y-4" onsubmit="event.preventDefault(); submitUser();">
-                    <input type="hidden" id="form-mode" value="add">
+                <form id="userForm" method="POST" action="{{ route('superadmin.users.store') }}" class="space-y-4">
+                    @csrf
+                    <input type="hidden" id="form-method" name="_method" value="POST">
                     <input type="hidden" id="form-userid" value="">
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Nama Lengkap</label>
-                        <input type="text" id="userName" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
+                        <input type="text" id="userName" name="name" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
                     </div>
 
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Alamat Email</label>
-                        <input type="email" id="userEmail" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
+                        <input type="email" id="userEmail" name="email" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
                     </div>
 
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Level Akses (Role)</label>
-                        <select id="userRole" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
-                            <option value="superadmin">Super Admin</option>
-                            <option value="admin">Admin Wilayah</option>
-                            <option value="operator">Operator Lapangan</option>
+                        <select id="userRole" name="role" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
+                            <option value="admin_pusat">Super Admin</option>
+                            <option value="admin_depo">Admin Wilayah</option>
+                            <option value="driver">Operator Lapangan</option>
                         </select>
                     </div>
 
                     <div id="passwordArea">
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
                         <div class="relative">
-                            <input type="password" id="userPassword" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
+                            <input type="password" id="userPassword" name="password" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
                             <button type="button" onclick="togglePassword()" class="absolute -translate-y-1/2 text-slate-400 right-3 top-1/2 hover:text-slate-600">
                                 <span class="text-[20px] material-symbols-outlined">visibility</span>
                             </button>
@@ -331,6 +287,11 @@
     </div>
 </div>
 
+<form id="deleteUserForm" method="POST" action="" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+
 <script>
     function showToast(message) {
         const toast = document.getElementById('toastNotification');
@@ -350,28 +311,34 @@
         
         if (mode === 'add') {
             form.reset();
+            form.action = "{{ route('superadmin.users.store') }}";
+            document.getElementById('form-method').value = "POST";
             document.getElementById('modal-title').textContent = 'Tambah Pengguna';
             document.getElementById('modal-subtitle').textContent = 'Buat akun baru untuk sistem';
             document.getElementById('modal-icon').textContent = 'person_add';
             document.getElementById('passwordArea').classList.remove('hidden');
+            document.getElementById('userPassword').required = true;
             document.getElementById('passwordHelpText').classList.remove('hidden');
         } else {
             // Edit Mode
             const row = document.getElementById('row-' + id);
             document.getElementById('form-userid').value = id;
+            form.action = "/superadmin/users/" + id;
+            document.getElementById('form-method').value = "PUT";
             document.getElementById('modal-title').textContent = 'Edit Pengguna';
             document.getElementById('modal-subtitle').textContent = 'Perbarui data akun';
             document.getElementById('modal-icon').textContent = 'manage_accounts';
             document.getElementById('passwordArea').classList.add('hidden');
+            document.getElementById('userPassword').required = false;
             document.getElementById('passwordHelpText').classList.add('hidden');
             
-            document.getElementById('userName').value = row.querySelector('.name-cell').textContent;
-            document.getElementById('userEmail').value = row.querySelector('.email-cell').textContent;
+            document.getElementById('userName').value = row.querySelector('.name-cell').textContent.trim();
+            document.getElementById('userEmail').value = row.querySelector('.email-cell').textContent.trim();
             
             const rText = row.querySelector('.role-cell').textContent.trim();
-            if(rText === 'Super Admin') document.getElementById('userRole').value = 'superadmin';
-            if(rText === 'Admin') document.getElementById('userRole').value = 'admin';
-            if(rText === 'Operator') document.getElementById('userRole').value = 'operator';
+            if(rText === 'Super Admin') document.getElementById('userRole').value = 'admin_pusat';
+            if(rText === 'Admin') document.getElementById('userRole').value = 'admin_depo';
+            if(rText === 'Operator') document.getElementById('userRole').value = 'driver';
         }
         toggleModal('userModal', true);
     }
@@ -383,51 +350,46 @@
         p.type = p.type === 'password' ? 'text' : 'password';
     }
 
-    function submitUser() {
-        const mode = document.getElementById('form-mode').value;
-        const name = document.getElementById('userName').value;
-        const roleSel = document.getElementById('userRole');
-        const roleText = roleSel.options[roleSel.selectedIndex].text;
-        
-        if (mode === 'edit') {
-            const id = document.getElementById('form-userid').value;
-            const r = document.getElementById('row-' + id);
-            r.querySelector('.name-cell').textContent = name;
-            r.querySelector('.email-cell').textContent = document.getElementById('userEmail').value;
-            
-            const roleSpan = r.querySelector('.role-cell');
-            roleSpan.textContent = roleText;
-            
-            const roleVal = document.getElementById('userRole').value;
-            r.dataset.role = roleVal;
-            if(roleVal === 'superadmin') roleSpan.className = "inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50 role-cell";
-            if(roleVal === 'admin') roleSpan.className = "inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 role-cell";
-            if(roleVal === 'operator') roleSpan.className = "inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 role-cell";
-            
-            showToast('User berhasil diperbarui!');
-        } else {
-            showToast('Sistem: Penambahan User Baru Sukses!');
-        }
-        closeUserModal();
-        recalcCounts();
-    }
-
     let delUserId = null;
     function openDeleteUserModal(id) {
         delUserId = id;
         document.getElementById('delete-user-name').textContent = document.getElementById('row-' + id).querySelector('.name-cell').textContent;
+        document.getElementById('deleteUserForm').action = "/superadmin/users/" + id;
         toggleModal('deleteUserModal', true);
     }
     function closeDeleteUserModal() { toggleModal('deleteUserModal', false); delUserId = null; }
     
     document.getElementById('confirmDeleteUserBtn').addEventListener('click', () => {
         if(delUserId) {
-            document.getElementById('row-' + delUserId).remove();
-            showToast('Pengguna dihapus.');
-            recalcCounts();
+            document.getElementById('deleteUserForm').submit();
         }
-        closeDeleteUserModal();
     });
+
+    function toggleUserActiveStatus(id) {
+        fetch(`/superadmin/users/${id}/toggle-status`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            showToast(data.is_active ? 'Pengguna diaktifkan' : 'Pengguna dinonaktifkan');
+            const row = document.getElementById('row-' + id);
+            const statusDot = row.querySelector('.absolute.bottom-0.right-0');
+            if (data.is_active) {
+                statusDot.className = 'absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-emerald-500 dark:border-slate-800';
+            } else {
+                statusDot.className = 'absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-slate-300 dark:border-slate-800';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Gagal mengubah status pengguna.');
+        });
+    }
 
     function filterByRole(role) {
         let visibleCount = 0;
@@ -440,19 +402,6 @@
             }
         });
         document.getElementById('displayCount').textContent = visibleCount;
-    }
-
-    function recalcCounts() {
-        let sa=0, ad=0, op=0;
-        document.querySelectorAll('.table-row').forEach(r => {
-            if(r.dataset.role === 'superadmin') sa++;
-            if(r.dataset.role === 'admin') ad++;
-            if(r.dataset.role === 'operator') op++;
-        });
-        document.getElementById('count-sa').textContent = sa;
-        document.getElementById('count-a').textContent = ad;
-        document.getElementById('count-o').textContent = op;
-        document.getElementById('displayCount').textContent = sa+ad+op;
     }
 </script>
 @endsection

@@ -31,10 +31,10 @@ class AuthenticatedSessionController extends Controller
         // dd($user->email, $user->role);
 
         return match ($user->role) {
-            'superadmin' => redirect()->route('superadmin.dashboard'),
-            'admin'      => redirect()->route('admin.dashboard'),
-            'operator'   => redirect()->route('operator.dashboard'),
-            default      => $this->logoutWithError(),
+            'admin_pusat' => redirect()->route('superadmin.dashboard'),
+            'admin_depo' => redirect()->route('admin.dashboard'),
+            'driver' => redirect()->route('operator.dashboard'),
+            default => $this->logoutWithError(),
         };
     }
 

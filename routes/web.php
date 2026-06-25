@@ -1,93 +1,107 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MasterDataController;
+use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\DistributionController;
+use App\Http\Controllers\SuratJalanController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+// ─── Root → redirect to login ───────────────────────────────────────────────
+Route::get('/', fn() => redirect()->route('login'));
 
-Route::middleware(['auth'])->group(function () {
+// ─── SUPERADMIN ──────────────────────────────────────────────────────────────
+Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(function () {
 
-    Route::get('/superadmin/dashboard', function () {
+    Route::get('/dashboard', function () {
         return view('superadmin.dashboard');
-    })->name('superadmin.dashboard');
+    })->name('dashboard');
 
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Users management
+    Route::get('/users-management', [UserController::class, 'index'])->name('users-management');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
-    Route::get('/operator/dashboard', function () {
-        return view('operator.dashboard');
-    })->name('operator.dashboard');
+    // Master Data
+    Route::get('/master-data', [MasterDataController::class, 'index'])->name('master-data');
+
+    // Master BBM (Fuel Types)
+    Route::post('/master-data/fuel', [MasterDataController::class, 'storeFuel'])->name('master-data.fuel.store');
+    Route::put('/master-data/fuel/{fuelType}', [MasterDataController::class, 'updateFuel'])->name('master-data.fuel.update');
+    Route::delete('/master-data/fuel/{fuelType}', [MasterDataController::class, 'destroyFuel'])->name('master-data.fuel.destroy');
+
+    // Master Armada (Vehicle Types)
+    Route::post('/master-data/vehicle', [MasterDataController::class, 'storeVehicle'])->name('master-data.vehicle.store');
+    Route::put('/master-data/vehicle/{vehicleType}', [MasterDataController::class, 'updateVehicle'])->name('master-data.vehicle.update');
+    Route::delete('/master-data/vehicle/{vehicleType}', [MasterDataController::class, 'destroyVehicle'])->name('master-data.vehicle.destroy');
+
+    // Master SPBU
+    Route::post('/master-data/spbu', [MasterDataController::class, 'storeSpbu'])->name('master-data.spbu.store');
+    Route::put('/master-data/spbu/{spbu}', [MasterDataController::class, 'updateSpbu'])->name('master-data.spbu.update');
+    Route::delete('/master-data/spbu/{spbu}', [MasterDataController::class, 'destroySpbu'])->name('master-data.spbu.destroy');
+
+
+
+    // Live Monitoring & Audit Reports
+    Route::get('/live-monitoring', [DistributionController::class, 'liveMonitoring'])->name('live-monitoring');
+    Route::get('/audit-reports', [DistributionController::class, 'auditReports'])->name('audit-reports');
+
+    // Surat Jalan Management (Admin Pusat)
+    Route::get('/surat-jalan', [SuratJalanController::class, 'index'])->name('surat-jalan.index');
+    Route::get('/surat-jalan/create', [SuratJalanController::class, 'create'])->name('surat-jalan.create');
+    Route::post('/surat-jalan', [SuratJalanController::class, 'store'])->name('surat-jalan.store');
+    Route::patch('/surat-jalan/{suratJalan}/cancel', [SuratJalanController::class, 'destroy'])->name('surat-jalan.cancel');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+// ─── ADMIN DEPO ───────────────────────────────────────────────────────────────
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
 
+    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/distribution-data', [DistributionController::class, 'adminIndex'])->name('distribution-data');
+    Route::get('/reports', [DistributionController::class, 'auditReports'])->name('reports');
+    Route::get('/profile', fn() => view('admin.profile'))->name('profile');
+
+    // Verifikasi Surat Jalan (Admin Depo)
+    Route::get('/verifikasi', [SuratJalanController::class, 'depoIndex'])->name('verifikasi');
+    Route::patch('/surat-jalan/{suratJalan}/verify', [SuratJalanController::class, 'verify'])->name('surat-jalan.verify');
+    Route::patch('/surat-jalan/{suratJalan}/dikirim', [SuratJalanController::class, 'markDikirim'])->name('surat-jalan.dikirim');
+
+    // Input Distribusi & QR (Admin Depo)
+    Route::get('/input-distribusi', [DistributionController::class, 'create'])->name('input-distribusi');
+    Route::post('/distributions', [DistributionController::class, 'store'])->name('distributions.store');
+    Route::get('/qr-management', [QrCodeController::class, 'index'])->name('qr-management');
+    Route::post('/qr-codes', [QrCodeController::class, 'store'])->name('qr-codes.store');
+    Route::patch('/qr-codes/{qrCode}', [QrCodeController::class, 'update'])->name('qr-codes.update');
+    Route::delete('/qr-codes/{qrCode}', [QrCodeController::class, 'destroy'])->name('qr-codes.destroy');
+});
+
+// ─── DRIVER (Operator) ───────────────────────────────────────────────────────
+Route::prefix('operator')->name('operator.')->middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [DistributionController::class, 'operatorDashboard'])->name('dashboard');
+
+    // Surat Jalan milik driver sendiri
+    Route::get('/surat-jalan', [SuratJalanController::class, 'driverIndex'])->name('surat-jalan');
+    Route::post('/surat-jalan/{suratJalan}/complete', [SuratJalanController::class, 'completeByDriver'])->name('surat-jalan.complete');
+
+    // History distribusi milik driver sendiri
+    Route::get('/history', [DistributionController::class, 'history'])->name('history');
+    Route::get('/profile', fn() => view('operator.profile'))->name('profile');
+});
+
+// ─── QR VALIDATE (JSON) ──────────────────────────────────────────────────────
+Route::post('/qr/validate', [QrCodeController::class, 'validateQr'])
+    ->middleware('auth')
+    ->name('qr.validate');
+
+// ─── PROFILE ─────────────────────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/operator/input-distribution', function () {
-        return view('operator.input-distribution');
-    })->name('operator.input-distribution');
-
-    Route::get('/operator/history', function () {
-        return view('operator.history');
-    })->name('operator.history');
-});
-
-Route::middleware(['auth'])->group(function () {
-
- Route::get('/superadmin/qr-code-management', function () {
-        return view('superadmin.qr-code-management');
-    })->name('superadmin.qr-code-management');
-
-
-    Route::get('/superadmin/users-management', function () {
-        return view('superadmin.users-management');
-    })->name('superadmin.users-management');
-
-    Route::get('/superadmin/master-data', function () {
-        return view('superadmin.master-data');
-    })->name('superadmin.master-data');
-
-    Route::get('/superadmin/live-monitoring', function () {
-        return view('superadmin.live-monitoring');
-    })->name('superadmin.live-monitoring');
-
-    Route::get('/superadmin/audit-reports', function () {
-        return view('superadmin.audit-reports');
-    })->name('superadmin.audit-reports');
-});
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/admin/distribution-data', function () {
-        return view('admin.distribution-data');
-    })->name('admin.distribution-data');
-
-    Route::get('/admin/reports', function () {
-        return view('admin.reports');
-    })->name('admin.reports');
-
-    Route::get('/admin/profile', function () {
-        return view('admin.profile');
-    })->name('admin.profile');
-});
-Route::prefix('operator')->name('operator.')->middleware(['auth'])->group(function () {
-    Route::get('/dashboard', fn() => view('operator.dashboard'))->name('dashboard');
-    Route::get('/input-distribution', fn() => view('operator.input-distribution'))->name('input-distribution');
-    Route::get('/history', fn() => view('operator.history'))->name('history');
-    Route::get('/profile', fn() => view('operator.profile'))->name('profile');
-});
-
-
 
 require __DIR__ . '/auth.php';

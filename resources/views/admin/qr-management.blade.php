@@ -1,4 +1,4 @@
-@extends('layouts.superadmin')
+@extends('layouts.admin')
 
 @section('title', 'QR Code Management')
 
@@ -45,7 +45,7 @@
                     <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">qr_code_2</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-black text-slate-900 dark:text-white" id="stat-total">4.532</h3>
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white" id="stat-total">{{ $stats['total'] }}</h3>
         </div>
         <div
             class="p-5 transition-all duration-300 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800 hover:-translate-y-1 hover:shadow-xl">
@@ -56,7 +56,8 @@
                         class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]">check_circle</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-black text-emerald-600 dark:text-emerald-400" id="stat-aktif">3.210</h3>
+            <h3 class="text-3xl font-black text-emerald-600 dark:text-emerald-400" id="stat-aktif">{{ $stats['aktif'] }}
+            </h3>
         </div>
         <div
             class="p-5 transition-all duration-300 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800 hover:-translate-y-1 hover:shadow-xl">
@@ -66,7 +67,8 @@
                     <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">verified</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-black text-blue-600 dark:text-blue-400" id="stat-digunakan">1.102</h3>
+            <h3 class="text-3xl font-black text-blue-600 dark:text-blue-400" id="stat-digunakan">{{ $stats['digunakan'] }}
+            </h3>
         </div>
         <div
             class="p-5 transition-all duration-300 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800 hover:-translate-y-1 hover:shadow-xl">
@@ -76,7 +78,7 @@
                     <span class="material-symbols-outlined text-red-500 dark:text-red-400 text-[20px]">cancel</span>
                 </div>
             </div>
-            <h3 class="text-3xl font-black text-red-500 dark:text-red-400" id="stat-expired">220</h3>
+            <h3 class="text-3xl font-black text-red-500 dark:text-red-400" id="stat-expired">{{ $stats['expired'] }}</h3>
         </div>
     </div>
 
@@ -119,60 +121,75 @@
                     </tr>
                 </thead>
                 <tbody id="qrTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
-                    @php
-                        $qrs = [
-                            ['id' => 'QR-PLT-20260207-001', 'spbu' => 'SPBU 34.123.01', 'bbm' => 'Pertalite', 'kuota' => '8.000', 'start' => '2026-02-07', 'end' => '2026-02-08', 'status' => 'Aktif', 'class' => 'text-emerald-700 bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30', 'icon' => 'check_circle', 'dot' => 'bg-emerald-500'],
-                            ['id' => 'QR-PMX-20260207-002', 'spbu' => 'SPBU 34.123.01', 'bbm' => 'Pertamax', 'kuota' => '8.000', 'start' => '2026-02-07', 'end' => '2026-02-08', 'status' => 'Digunakan', 'class' => 'text-blue-700 bg-blue-100 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200 dark:border-blue-500/30', 'icon' => 'verified', 'dot' => 'bg-blue-500'],
-                            ['id' => 'QR-SLR-20260205-003', 'spbu' => 'SPBU 34.121.05', 'bbm' => 'Solar', 'kuota' => '6.000', 'start' => '2026-02-05', 'end' => '2026-02-06', 'status' => 'Expired', 'class' => 'text-red-700 bg-red-100 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30', 'icon' => 'cancel', 'dot' => 'bg-red-500'],
-                        ];
-                    @endphp
+                    @foreach ($qrCodes as $index => $qr)
+                        @php
+                            $dot = 'bg-slate-500';
+                            if ($qr->fuelType->code === 'PLT')
+                                $dot = 'bg-emerald-500';
+                            elseif ($qr->fuelType->code === 'PMX')
+                                $dot = 'bg-blue-500';
+                            elseif ($qr->fuelType->code === 'SLR')
+                                $dot = 'bg-slate-700';
 
-                    @foreach ($qrs as $index => $qr)
-                        <tr class="transition table-row hover:bg-slate-50 dark:hover:bg-slate-800/50" id="row-{{ $index }}"
-                            data-id="{{ $index }}" data-qrid="{{ $qr['id'] }}" data-spbu="{{ $qr['spbu'] }}"
-                            data-bbm="{{ $qr['bbm'] }}" data-kuota="{{ $qr['kuota'] }}" data-start="{{ $qr['start'] }}"
-                            data-end="{{ $qr['end'] }}" data-status="{{ $qr['status'] }}">
+                            if ($qr->status === 'aktif') {
+                                $class = 'text-emerald-700 bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30';
+                                $icon = 'check_circle';
+                            } elseif ($qr->status === 'digunakan') {
+                                $class = 'text-blue-700 bg-blue-100 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200 dark:border-blue-500/30';
+                                $icon = 'verified';
+                            } else {
+                                $class = 'text-red-700 bg-red-100 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30';
+                                $icon = 'cancel';
+                            }
+                        @endphp
+                        <tr class="transition table-row hover:bg-slate-50 dark:hover:bg-slate-800/50" id="row-{{ $qr->id }}"
+                            data-id="{{ $qr->id }}" data-qrid="{{ $qr->qr_id }}" data-spbu="{{ $qr->spbu->name }}"
+                            data-bbm="{{ $qr->fuelType->name }}" data-kuota="{{ number_format($qr->kuota_liter, 0, ',', '.') }}"
+                            data-start="{{ $qr->valid_from->format('Y-m-d') }}"
+                            data-end="{{ $qr->valid_until->format('Y-m-d') }}" data-status="{{ ucfirst($qr->status) }}">
                             <td class="px-6 py-4">
                                 <span
-                                    class="font-mono text-xs font-bold text-slate-900 dark:text-white qrid-display">{{ $qr['id'] }}</span>
+                                    class="font-mono text-xs font-bold text-slate-900 dark:text-white qrid-display">{{ $qr->qr_id }}</span>
                             </td>
-                            <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white spbu-display">{{ $qr['spbu'] }}
+                            <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white spbu-display">
+                                {{ $qr->spbu->name }}
                             </td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-slate-100/50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded-lg border border-slate-200/50">
-                                    <span class="w-2 h-2 rounded-full {{ $qr['dot'] }}"></span>
-                                    <span class="bbm-display">{{ $qr['bbm'] }}</span>
+                                    <span class="w-2 h-2 rounded-full {{ $dot }}"></span>
+                                    <span class="bbm-display">{{ $qr->fuelType->name }}</span>
                                 </span>
                             </td>
                             <td class="px-6 py-4"><span
-                                    class="font-bold text-slate-900 dark:text-white kuota-display">{{ $qr['kuota'] }}</span>
+                                    class="font-bold text-slate-900 dark:text-white kuota-display">{{ number_format($qr->kuota_liter, 0, ',', '.') }}</span>
                                 Liter</td>
                             <td class="px-6 py-4 text-xs font-semibold text-slate-500 period-display">
-                                {{ \Carbon\Carbon::parse($qr['start'])->format('d M') }} -
-                                {{ \Carbon\Carbon::parse($qr['end'])->format('d M Y') }}</td>
+                                {{ $qr->valid_from->format('d M') }} -
+                                {{ $qr->valid_until->format('d M Y') }}
+                            </td>
                             <td class="px-6 py-4 text-center">
                                 <span
-                                    class="status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border {{ $qr['class'] }}">
-                                    <span class="material-symbols-outlined text-[14px]">{{ $qr['icon'] }}</span>
-                                    <span class="status-text">{{ $qr['status'] }}</span>
+                                    class="status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border {{ $class }}">
+                                    <span class="material-symbols-outlined text-[14px]">{{ $icon }}</span>
+                                    <span class="status-text">{{ ucfirst($qr->status) }}</span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button onclick="viewQRDetail({{ $index }})"
+                                    <button onclick="viewQRDetail('{{ $qr->id }}')"
                                         class="p-2 transition rounded-lg text-pertamina-blue hover:bg-pertamina-blue/10 dark:hover:bg-blue-900/20 dark:text-blue-400 group"
                                         title="Lihat">
                                         <span
                                             class="text-lg transition-transform material-symbols-outlined group-hover:scale-110">visibility</span>
                                     </button>
-                                    <button onclick="openEditModal({{ $index }})"
+                                    <button onclick="openEditModal('{{ $qr->id }}')"
                                         class="p-2 transition rounded-lg text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-900/20 dark:text-orange-400 group"
                                         title="Edit">
                                         <span
                                             class="text-lg transition-transform material-symbols-outlined group-hover:scale-110">edit</span>
                                     </button>
-                                    <button onclick="openDeleteModal({{ $index }})"
+                                    <button onclick="openDeleteModal('{{ $qr->id }}')"
                                         class="p-2 transition rounded-lg text-pertamina-red hover:bg-pertamina-red/10 dark:hover:bg-red-900/20 dark:text-red-400 group"
                                         title="Hapus">
                                         <span
@@ -185,6 +202,11 @@
                 </tbody>
             </table>
         </div>
+        @if($qrCodes->hasPages())
+            <div class="p-6 border-t border-slate-100 dark:border-slate-800">
+                {{ $qrCodes->links() }}
+            </div>
+        @endif
     </div>
 
     {{-- MODALS --}}
@@ -549,7 +571,7 @@
             btnGen.disabled = true;
             btnGen.innerHTML = '<span class="flex items-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memproses...</span>';
 
-            fetch('{{ route('superadmin.qr-codes.store') }}', {
+            fetch('{{ route('admin.qr-codes.store') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -589,6 +611,8 @@
                     const el = document.getElementById('stat-total');
                     if (el) el.innerText = (parseInt(el.innerText.replace(/\./g, '')) + 1).toLocaleString('id-ID');
                     showToast('QR Code berhasil di-generate!');
+                    // Reload window to show new data
+                    setTimeout(() => window.location.reload(), 1500);
                 })
                 .catch(err => {
                     alert('Error: ' + err.message);
@@ -625,7 +649,7 @@
             const r = document.getElementById('row-' + id);
             if (!r) return;
             document.getElementById('edit-subtitle').textContent = r.dataset.qrid;
-            document.getElementById('edit-kuota').value = r.dataset.kuota.replace('.', '');
+            document.getElementById('edit-kuota').value = r.dataset.kuota.replace(/\./g, '');
             document.getElementById('edit-status').value = r.dataset.status;
             toggleModal('editModal', true);
         }
@@ -637,26 +661,47 @@
                 const newK = Number(rawK).toLocaleString('id-ID');
                 const newS = document.getElementById('edit-status').value;
 
-                r.dataset.kuota = newK;
-                r.dataset.status = newS;
+                // Send request to backend
+                fetch(`/admin/qr-codes/${currentEditId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        _method: 'PATCH',
+                        kuota_liter: rawK,
+                        status: newS.toLowerCase(),
+                    })
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            r.dataset.kuota = newK;
+                            r.dataset.status = newS;
 
-                r.querySelector('.kuota-display').textContent = newK;
-                const badgeSpan = r.querySelector('.status-badge');
+                            r.querySelector('.kuota-display').textContent = newK;
+                            const badgeSpan = r.querySelector('.status-badge');
 
-                if (newS === 'Aktif') {
-                    badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-emerald-700 bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30';
-                    badgeSpan.querySelector('.material-symbols-outlined').textContent = 'check_circle';
-                } else if (newS === 'Digunakan') {
-                    badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-blue-700 bg-blue-100 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200 dark:border-blue-500/30';
-                    badgeSpan.querySelector('.material-symbols-outlined').textContent = 'verified';
-                } else {
-                    badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-red-700 bg-red-100 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30';
-                    badgeSpan.querySelector('.material-symbols-outlined').textContent = 'cancel';
-                }
-                badgeSpan.querySelector('.status-text').textContent = newS;
-                showToast('Update QR Mode sukses!');
+                            if (newS === 'Aktif') {
+                                badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-emerald-700 bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30';
+                                badgeSpan.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+                            } else if (newS === 'Digunakan') {
+                                badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-blue-700 bg-blue-100 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200 dark:border-blue-500/30';
+                                badgeSpan.querySelector('.material-symbols-outlined').textContent = 'verified';
+                            } else {
+                                badgeSpan.className = 'status-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full border text-red-700 bg-red-100 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30';
+                                badgeSpan.querySelector('.material-symbols-outlined').textContent = 'cancel';
+                            }
+                            badgeSpan.querySelector('.status-text').textContent = newS;
+                            showToast('Update QR Mode sukses!');
+                            closeEditModal();
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            alert('Gagal update data QR di server');
+                        }
+                    });
             }
-            closeEditModal();
         }
 
         // Delete Component
@@ -669,10 +714,28 @@
         function closeDeleteModal() { toggleModal('deleteModal', false); currentDelId = null; }
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
             if (currentDelId) {
-                document.getElementById('row-' + currentDelId).remove();
-                showToast('QR berhasil di hapus!');
+                fetch(`/admin/qr-codes/${currentDelId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        _method: 'DELETE'
+                    })
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            document.getElementById('row-' + currentDelId).remove();
+                            showToast('QR berhasil di hapus!');
+                            closeDeleteModal();
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            alert('Gagal menghapus data QR dari server');
+                        }
+                    });
             }
-            closeDeleteModal();
         });
 
         function filterTable() {

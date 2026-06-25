@@ -21,7 +21,27 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
     ];
+
+    public function isAdminPusat(): bool
+    {
+        return $this->role === 'admin_pusat';
+    }
+    public function isAdminDepo(): bool
+    {
+        return $this->role === 'admin_depo';
+    }
+    public function isDriver(): bool
+    {
+        return $this->role === 'driver';
+    }
+
+    public function distributions()
+    {
+        return $this->hasMany(\App\Models\Distribution::class, 'operator_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

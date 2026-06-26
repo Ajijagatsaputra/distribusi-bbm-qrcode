@@ -166,8 +166,42 @@ class SuratJalanController extends Controller
             return response()->json(['success' => false, 'message' => 'Status tidak valid untuk dikonfirmasi.'], 422);
         }
 
-        // Verifikasi QR token yang di-scan
-        $request->validate(['token' => 'required|string']);
+        // Verifikasi QR token yang di-scan & koordinat GPS
+        $request->validate([
+            'token' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+
+        $spbu = $suratJalan->spbu;
+
+        // Validasi Geolocation & Geofencing (Fitur Unggulan Tugas Akhir)
+        if ($spbu && $spbu->latitude && $spbu->longitude) {
+            if (!$request->latitude || !$request->longitude) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses GPS lokasi handphone diperlukan untuk validasi pembongkaran BBM di area SPBU.'
+                ], 422);
+            }
+
+            // Hitung jarak menggunakan Haversine Formula
+            $distance = $this->calculateDistance(
+                $request->latitude,
+                $request->longitude,
+                $spbu->latitude,
+                $spbu->longitude
+            );
+
+            // Jarak toleransi maksimal: 100 meter
+            if ($distance > 100) {
+                $formattedDistance = number_format($distance, 1, ',', '.');
+                return response()->json([
+                    'success' => false,
+                    'message' => "Anda terdeteksi berada {$formattedDistance} meter di luar area SPBU {$spbu->name}. Pembongkaran ditolak (Batas aman: 100 meter)."
+                ], 422);
+            }
+        }
+
         $qrCode = \App\Models\QrCode::where('token', $request->token)
             ->where('status', 'aktif')
             ->first();
@@ -196,15 +230,36 @@ class SuratJalanController extends Controller
             'driver_name' => auth()->user()->name,
             'volume_liter' => $suratJalan->volume_liter,
             'status' => 'selesai',
-            'notes' => 'Dikonfirmasi secara otomatis via Scan QR Code di SPBU.',
+            'notes' => 'Dikonfirmasi secara otomatis via Scan QR Code & Verifikasi Geolocation GPS.',
             'surat_jalan_id' => $suratJalan->id,
             'distributed_at' => now(),
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Distribusi BBM berhasil dikonfirmasi. Terima kasih!',
+            'message' => 'Distribusi BBM berhasil dikonfirmasi dan tervalidasi di area SPBU!',
             'kode' => $suratJalan->kode_surat_jalan,
         ]);
+    }
+
+    /**
+     * Menghitung jarak antara dua titik koordinat bumi menggunakan Haversine Formula (dalam satuan meter)
+     */
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // Radius bumi dalam meter
+
+        $latFrom = deg2rad($lat1);
+        $lonFrom = deg2rad($lon1);
+        $latTo = deg2rad($lat2);
+        $lonTo = deg2rad($lon2);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+
+        return $angle * $earthRadius;
     }
 }

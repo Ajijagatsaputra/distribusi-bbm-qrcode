@@ -69,6 +69,16 @@
                 <span class="material-symbols-outlined group-hover:scale-110 transition-transform">description</span>
                 <span class="text-sm">Laporan Audit</span>
             </a>
+
+            <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->routeIs('admin.forecasting') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
+                href="{{ route('admin.forecasting') }}">
+                @if(request()->routeIs('admin.forecasting'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-pertamina-blue rounded-r-full"></div>
+                @endif
+                <span
+                    class="material-symbols-outlined group-hover:scale-110 transition-transform">online_prediction</span>
+                <span class="text-sm">Prediksi Kebutuhan</span>
+            </a>
         </nav>
 
         <!-- Profile & Logout -->

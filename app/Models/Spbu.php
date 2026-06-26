@@ -9,7 +9,7 @@ class Spbu extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code', 'address', 'city', 'status'];
+    protected $fillable = ['name', 'code', 'address', 'city', 'status', 'latitude', 'longitude'];
 
     public function qrCodes()
     {

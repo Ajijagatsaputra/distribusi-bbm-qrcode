@@ -22,9 +22,9 @@
                 <select id="roleFilter" onchange="filterByRole(this.value)"
                     class="px-4 py-2.5 pr-10 text-sm font-semibold bg-white border rounded-xl outline-none appearance-none cursor-pointer border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:ring-4 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all shadow-sm">
                     <option value="">Semua Role</option>
-                    <option value="superadmin">Super Admin</option>
-                    <option value="admin">Admin</option>
-                    <option value="operator">Operator</option>
+                    <option value="admin_pusat">Super Admin</option>
+                    <option value="admin_depo">Admin</option>
+                    <option value="driver">Operator</option>
                 </select>
                 <span class="absolute w-4 h-4 -translate-y-1/2 pointer-events-none material-symbols-outlined text-[16px] text-slate-400 right-3 top-1/2">expand_more</span>
             </div>
@@ -220,27 +220,26 @@
                     <input type="hidden" id="form-userid" value="">
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Nama Lengkap</label>
-                        <input type="text" id="userName" name="name" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
+                        <input type="text" id="userName" name="name" placeholder="Masukkan nama lengkap..." class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
                     </div>
 
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Alamat Email</label>
-                        <input type="email" id="userEmail" name="email" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
+                        <input type="email" id="userEmail" name="email" placeholder="contoh: nama@domain.com" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
                     </div>
 
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Level Akses (Role)</label>
                         <select id="userRole" name="role" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
-                            <option value="admin_pusat">Super Admin</option>
-                            <option value="admin_depo">Admin Wilayah</option>
-                            <option value="driver">Operator Lapangan</option>
+                            <option value="admin_depo">Admin Depo</option>
+                            <option value="driver">Driver (Operator Lapangan)</option>
                         </select>
                     </div>
 
                     <div id="passwordArea">
-                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
+                        <label id="passwordLabel" class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
                         <div class="relative">
-                            <input type="password" id="userPassword" name="password" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
+                            <input type="password" id="userPassword" name="password" placeholder="••••••••" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
                             <button type="button" onclick="togglePassword()" class="absolute -translate-y-1/2 text-slate-400 right-3 top-1/2 hover:text-slate-600">
                                 <span class="text-[20px] material-symbols-outlined">visibility</span>
                             </button>
@@ -306,8 +305,14 @@
     }
 
     function openUserModal(mode, id = null) {
-        document.getElementById('form-mode').value = mode;
         const form = document.getElementById('userForm');
+        const roleSelect = document.getElementById('userRole');
+        
+        // Remove admin_pusat option if it exists from previous edit
+        const adminPusatOpt = roleSelect.querySelector('option[value="admin_pusat"]');
+        if (adminPusatOpt) {
+            adminPusatOpt.remove();
+        }
         
         if (mode === 'add') {
             form.reset();
@@ -316,7 +321,7 @@
             document.getElementById('modal-title').textContent = 'Tambah Pengguna';
             document.getElementById('modal-subtitle').textContent = 'Buat akun baru untuk sistem';
             document.getElementById('modal-icon').textContent = 'person_add';
-            document.getElementById('passwordArea').classList.remove('hidden');
+            document.getElementById('passwordLabel').textContent = 'Password';
             document.getElementById('userPassword').required = true;
             document.getElementById('passwordHelpText').classList.remove('hidden');
         } else {
@@ -328,7 +333,7 @@
             document.getElementById('modal-title').textContent = 'Edit Pengguna';
             document.getElementById('modal-subtitle').textContent = 'Perbarui data akun';
             document.getElementById('modal-icon').textContent = 'manage_accounts';
-            document.getElementById('passwordArea').classList.add('hidden');
+            document.getElementById('passwordLabel').textContent = 'Password (Kosongkan jika tidak ingin mengubah)';
             document.getElementById('userPassword').required = false;
             document.getElementById('passwordHelpText').classList.add('hidden');
             
@@ -336,9 +341,18 @@
             document.getElementById('userEmail').value = row.querySelector('.email-cell').textContent.trim();
             
             const rText = row.querySelector('.role-cell').textContent.trim();
-            if(rText === 'Super Admin') document.getElementById('userRole').value = 'admin_pusat';
-            if(rText === 'Admin') document.getElementById('userRole').value = 'admin_depo';
-            if(rText === 'Operator') document.getElementById('userRole').value = 'driver';
+            if (rText === 'Super Admin') {
+                // If editing a Super Admin, temporarily add the option back so it shows correctly
+                const opt = document.createElement('option');
+                opt.value = 'admin_pusat';
+                opt.textContent = 'Super Admin';
+                roleSelect.insertBefore(opt, roleSelect.firstChild);
+                roleSelect.value = 'admin_pusat';
+            } else if (rText === 'Admin') {
+                roleSelect.value = 'admin_depo';
+            } else if (rText === 'Operator') {
+                roleSelect.value = 'driver';
+            }
         }
         toggleModal('userModal', true);
     }

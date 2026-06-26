@@ -98,6 +98,8 @@ class MasterDataController extends Controller
             'code' => 'required|string|max:30|unique:spbus,code',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'status' => ['required', Rule::in(['aktif', 'nonaktif'])],
         ]);
         Spbu::create($validated);
@@ -111,6 +113,8 @@ class MasterDataController extends Controller
             'code' => ['required', 'string', 'max:30', Rule::unique('spbus')->ignore($spbu->id)],
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'status' => ['required', Rule::in(['aktif', 'nonaktif'])],
         ]);
         $spbu->update($validated);

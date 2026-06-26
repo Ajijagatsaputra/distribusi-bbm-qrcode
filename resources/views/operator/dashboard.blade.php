@@ -82,7 +82,7 @@
                     </div>
                     <div class="flex flex-col">
                         <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">BBM<span class="text-pertamina-red">Distribusi</span></h1>
-                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Operator Portal</p>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Driver Portal</p>
                     </div>
                 </div>
 

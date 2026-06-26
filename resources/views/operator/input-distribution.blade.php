@@ -132,7 +132,7 @@
                     <div class="flex flex-col">
                         <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
                             BBM<span class="text-pertamina-red">Distribusi</span></h1>
-                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Operator Portal
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Driver Portal
                         </p>
                     </div>
                 </div>
@@ -174,7 +174,8 @@
                             </div>
                             <div class="flex flex-col overflow-hidden">
                                 <p class="text-sm font-bold text-slate-900 dark:text-white truncate">
-                                    {{ auth()->user()->name }}</p>
+                                    {{ auth()->user()->name }}
+                                </p>
                             </div>
                         </div>
                         <form method="POST" action="{{ route('logout') }}">

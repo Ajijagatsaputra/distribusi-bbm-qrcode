@@ -46,6 +46,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(fu
     // Live Monitoring & Audit Reports
     Route::get('/live-monitoring', [DistributionController::class, 'liveMonitoring'])->name('live-monitoring');
     Route::get('/audit-reports', [DistributionController::class, 'auditReports'])->name('audit-reports');
+    Route::get('/forecasting', [DistributionController::class, 'forecasting'])->name('forecasting');
 
     // Surat Jalan Management (Admin Pusat)
     Route::get('/surat-jalan', [SuratJalanController::class, 'index'])->name('surat-jalan.index');
@@ -57,9 +58,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(fu
 // ─── ADMIN DEPO ───────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [DistributionController::class, 'adminDashboard'])->name('dashboard');
     Route::get('/distribution-data', [DistributionController::class, 'adminIndex'])->name('distribution-data');
     Route::get('/reports', [DistributionController::class, 'auditReports'])->name('reports');
+    Route::get('/forecasting', [DistributionController::class, 'forecasting'])->name('forecasting');
     Route::get('/profile', fn() => view('admin.profile'))->name('profile');
 
     // Verifikasi Surat Jalan (Admin Depo)

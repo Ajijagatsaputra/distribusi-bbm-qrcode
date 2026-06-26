@@ -81,6 +81,16 @@
                     class="material-symbols-outlined group-hover:scale-110 transition-transform text-[20px]">description</span>
                 <span class="text-sm">Audit Reports</span>
             </a>
+
+            <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->is('superadmin/forecasting') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
+                href="/superadmin/forecasting">
+                @if(request()->is('superadmin/forecasting'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-pertamina-blue rounded-r-full"></div>
+                @endif
+                <span
+                    class="material-symbols-outlined group-hover:scale-110 transition-transform text-[20px]">online_prediction</span>
+                <span class="text-sm">Forecasting BBM</span>
+            </a>
         </nav>
 
         <!-- Profile & Logout -->

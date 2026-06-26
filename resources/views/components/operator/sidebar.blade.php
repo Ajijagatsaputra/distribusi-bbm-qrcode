@@ -16,7 +16,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-[#111318] dark:text-white text-base font-bold leading-tight">BBM Distribusi</h1>
-                <p class="text-[#636f88] dark:text-slate-400 text-xs font-medium">Operator Portal</p>
+                <p class="text-[#636f88] dark:text-slate-400 text-xs font-medium">Driver Portal</p>
             </div>
         </div>
 

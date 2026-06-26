@@ -305,6 +305,9 @@
                                     Kota</th>
                                 <th
                                     class="px-5 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200/50 dark:border-slate-800">
+                                    Koordinat</th>
+                                <th
+                                    class="px-5 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200/50 dark:border-slate-800">
                                     Status</th>
                                 <th
                                     class="px-5 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200/50 dark:border-slate-800 text-right">
@@ -322,6 +325,13 @@
                                     <td class="px-5 py-4 text-slate-600 dark:text-slate-400 address-cell">{{ $spbu->address }}
                                     </td>
                                     <td class="px-5 py-4 text-slate-600 dark:text-slate-400 city-cell">{{ $spbu->city }}</td>
+                                    <td class="px-5 py-4 text-slate-600 dark:text-slate-400 coordinates-cell" data-lat="{{ $spbu->latitude }}" data-lng="{{ $spbu->longitude }}">
+                                        @if($spbu->latitude && $spbu->longitude)
+                                            <span class="font-mono text-xs">{{ $spbu->latitude }}, {{ $spbu->longitude }}</span>
+                                        @else
+                                            <span class="text-slate-400 dark:text-slate-500 text-xs italic">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-5 py-4">
                                         @if($spbu->status === 'aktif')
                                             <span
@@ -538,6 +548,20 @@
                                 class="w-full px-4 py-2.5 text-sm transition-all border outline-none rounded-xl bg-white/50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20"
                                 placeholder="Bandung">
                         </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Latitude</label>
+                                <input type="text" id="spbu-latitude" name="latitude"
+                                    class="w-full px-4 py-2.5 text-sm transition-all border outline-none rounded-xl bg-white/50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20"
+                                    placeholder="Cth: -6.175392">
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Longitude</label>
+                                <input type="text" id="spbu-longitude" name="longitude"
+                                    class="w-full px-4 py-2.5 text-sm transition-all border outline-none rounded-xl bg-white/50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20"
+                                    placeholder="Cth: 106.827153">
+                            </div>
+                        </div>
                         <div>
                             <label
                                 class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Status</label>
@@ -659,6 +683,8 @@
                 form.action = "{{ route('superadmin.master-data.spbu.store') }}";
                 document.getElementById('spbu-method').value = "POST";
                 document.getElementById('spbu-modal-title').textContent = "Tambah Master SPBU";
+                document.getElementById('spbu-latitude').value = "";
+                document.getElementById('spbu-longitude').value = "";
             } else {
                 const row = document.getElementById('spbu-row-' + id);
                 form.action = "/superadmin/master-data/spbu/" + id;
@@ -669,6 +695,11 @@
                 document.getElementById('spbu-code').value = row.querySelector('.code-cell').textContent.trim();
                 document.getElementById('spbu-address').value = row.querySelector('.address-cell').textContent.trim();
                 document.getElementById('spbu-city').value = row.querySelector('.city-cell').textContent.trim();
+                
+                const coordsCell = row.querySelector('.coordinates-cell');
+                document.getElementById('spbu-latitude').value = coordsCell.dataset.lat || "";
+                document.getElementById('spbu-longitude').value = coordsCell.dataset.lng || "";
+
                 document.getElementById('spbu-status').value = row.querySelector('.status-cell').dataset.status;
             }
             openModal('modalSpbu');

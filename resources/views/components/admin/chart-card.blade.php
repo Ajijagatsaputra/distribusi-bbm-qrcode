@@ -1,3 +1,8 @@
+@props([
+    'weeklyVolume' => 0,
+    'dailyAverage' => 0
+])
+
 <div class="relative p-6 overflow-hidden bg-white border shadow-card rounded-2xl dark:bg-slate-900 border-slate-200 dark:border-slate-800">
 
     {{-- DECORATIVE BACKGROUND GRADIENT --}}
@@ -23,20 +28,7 @@
             {{-- Performance Badge --}}
             <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-green-700 bg-green-100 rounded-lg dark:bg-green-900/30 dark:text-green-400 shadow-sm">
                 <span class="text-base material-symbols-outlined">arrow_upward</span>
-                <span>+8.4%</span>
-            </div>
-
-            {{-- Time Range Selector --}}
-            <div class="relative">
-                <select class="px-4 py-2 text-sm font-semibold transition-all border appearance-none cursor-pointer pr-9 rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                    <option>7 Hari</option>
-                    <option>30 Hari</option>
-                    <option>90 Hari</option>
-                    <option>1 Tahun</option>
-                </select>
-                <span class="absolute text-base transform -translate-y-1/2 pointer-events-none text-slate-400 right-3 top-1/2 material-symbols-outlined">
-                    expand_more
-                </span>
+                <span>Aktif</span>
             </div>
         </div>
     </div>
@@ -127,7 +119,7 @@
                 <span class="text-lg text-blue-600 material-symbols-outlined dark:text-blue-400">water_drop</span>
                 <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Total Minggu Ini</p>
             </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white">12.5K</p>
+            <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($weeklyVolume / 1000, 1, ',', '.') }}K</p>
             <p class="mt-1 text-xs font-medium text-blue-600 dark:text-blue-400">KL Didistribusikan</p>
         </div>
 
@@ -137,7 +129,7 @@
                 <span class="text-lg material-symbols-outlined text-emerald-600 dark:text-emerald-400">speed</span>
                 <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Rata-rata Harian</p>
             </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white">1.8K</p>
+            <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($dailyAverage / 1000, 1, ',', '.') }}K</p>
             <p class="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">KL per Hari</p>
         </div>
 
@@ -145,10 +137,10 @@
         <div class="p-4 border rounded-xl bg-gradient-to-br from-amber-50 to-transparent dark:from-amber-900/10 border-amber-100 dark:border-amber-900/30">
             <div class="flex items-center gap-2 mb-1">
                 <span class="text-lg material-symbols-outlined text-amber-600 dark:text-amber-400">schedule</span>
-                <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Update Terakhir</p>
+                <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Status</p>
             </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white">2h</p>
-            <p class="mt-1 text-xs font-medium text-amber-600 dark:text-amber-400">Yang Lalu</p>
+            <p class="text-2xl font-bold text-slate-900 dark:text-white">Active</p>
+            <p class="mt-1 text-xs font-medium text-amber-600 dark:text-amber-400">Data Real-time</p>
         </div>
     </div>
 
@@ -160,18 +152,14 @@
             </div>
             <div>
                 <p class="text-xs font-semibold text-slate-900 dark:text-white">Data Real-time</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Sinkronisasi otomatis setiap 30 menit</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Sinkronisasi otomatis dari database</p>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
-            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold transition-all rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700">
+            <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold transition-all rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700">
                 <span class="text-base material-symbols-outlined">download</span>
                 Export
-            </button>
-            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white transition-all rounded-lg bg-gradient-to-r from-primary to-primary-dark hover:shadow-lg">
-                <span class="text-base material-symbols-outlined">insights</span>
-                Analisis Detail
             </button>
         </div>
     </div>

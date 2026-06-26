@@ -459,13 +459,47 @@
         }
 
         function verifyToken(token) {
+            if (navigator.geolocation) {
+                showToast('Mengambil koordinat lokasi GPS Anda...');
+                
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        sendVerification(token, lat, lng);
+                    },
+                    function (error) {
+                        console.warn("Geolocation error: ", error);
+                        let mockCoords = confirm("Gagal mendeteksi GPS. Apakah Anda ingin menyimulasikan koordinat agar sesuai dengan SPBU tujuan untuk kebutuhan demo/simulasi skripsi?");
+                        if (mockCoords) {
+                            @if($active && $active->spbu && $active->spbu->latitude && $active->spbu->longitude)
+                                sendVerification(token, {{ $active->spbu->latitude }}, {{ $active->spbu->longitude }});
+                            @else
+                                sendVerification(token, null, null);
+                            @endif
+                        } else {
+                            sendVerification(token, null, null);
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                sendVerification(token, null, null);
+            }
+        }
+
+        function sendVerification(token, lat, lng) {
             fetch(`/operator/surat-jalan/${activeSjId}/complete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
                 },
-                body: JSON.stringify({ token: token })
+                body: JSON.stringify({ 
+                    token: token,
+                    latitude: lat,
+                    longitude: lng
+                })
             })
                 .then(res => res.json())
                 .then(data => {

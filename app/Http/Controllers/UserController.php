@@ -76,7 +76,17 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
-        $user->delete();
+
+        try {
+            $user->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Check for foreign key integrity constraint violation
+            if ($e->getCode() === '23000') {
+                return back()->with('error', 'Tidak dapat menghapus pengguna ini karena memiliki riwayat transaksi/aktivitas dalam sistem. Silakan nonaktifkan status akunnya saja.');
+            }
+            throw $e;
+        }
+
         return redirect()->route('superadmin.users-management')
             ->with('success', 'Pengguna berhasil dihapus.');
     }

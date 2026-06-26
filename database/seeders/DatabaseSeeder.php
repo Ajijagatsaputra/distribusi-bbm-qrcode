@@ -78,11 +78,11 @@ class DatabaseSeeder extends Seeder
 
         // ── 4. SPBU ──────────────────────────────────────────────────────────
         $spbuData = [
-            ['name' => 'SPBU 34.123.01 - Pasteur', 'code' => '34.123.01', 'city' => 'Bandung', 'address' => 'Jl. Dr. Djundjunan No. 120'],
-            ['name' => 'SPBU 34.121.05 - Dago', 'code' => '34.121.05', 'city' => 'Bandung', 'address' => 'Jl. Ir. H. Juanda No. 252'],
-            ['name' => 'SPBU 34.411.01 - Cimahi', 'code' => '34.411.01', 'city' => 'Cimahi', 'address' => 'Jl. Jend. H. Amir Machmud No. 55'],
-            ['name' => 'SPBU 34.152.03 - Soreang', 'code' => '34.152.03', 'city' => 'Kab. Bandung', 'address' => 'Jl. Raya Soreang No. 10'],
-            ['name' => 'Terminal BBM Ujung Berung', 'code' => 'TBB-UB-01', 'city' => 'Bandung', 'address' => 'Jl. AH. Nasution No. 5, Ujung Berung'],
+            ['name' => 'SPBU 34.123.01 - Pasteur', 'code' => '34.123.01', 'city' => 'Bandung', 'address' => 'Jl. Dr. Djundjunan No. 120', 'latitude' => -6.896582, 'longitude' => 107.579471],
+            ['name' => 'SPBU 34.121.05 - Dago', 'code' => '34.121.05', 'city' => 'Bandung', 'address' => 'Jl. Ir. H. Juanda No. 252', 'latitude' => -6.883584, 'longitude' => 107.616335],
+            ['name' => 'SPBU 34.411.01 - Cimahi', 'code' => '34.411.01', 'city' => 'Cimahi', 'address' => 'Jl. Jend. H. Amir Machmud No. 55', 'latitude' => -6.882190, 'longitude' => 107.540120],
+            ['name' => 'SPBU 34.152.03 - Soreang', 'code' => '34.152.03', 'city' => 'Kab. Bandung', 'address' => 'Jl. Raya Soreang No. 10', 'latitude' => -7.030612, 'longitude' => 107.525547],
+            ['name' => 'Terminal BBM Ujung Berung', 'code' => 'TBB-UB-01', 'city' => 'Bandung', 'address' => 'Jl. AH. Nasution No. 5, Ujung Berung', 'latitude' => -6.917415, 'longitude' => 107.697412],
         ];
         foreach ($spbuData as $s) {
             Spbu::updateOrCreate(['code' => $s['code']], array_merge($s, ['status' => 'aktif']));

@@ -89,6 +89,28 @@ class DatabaseSeeder extends Seeder
         }
         $spbus = Spbu::all();
 
+        $spbuPasteur = $spbus->where('code', '34.123.01')->first();
+        if ($spbuPasteur) {
+            User::updateOrCreate(['email' => 'adminspbu1@bbm.com'], [
+                'name' => 'Admin SPBU Pasteur',
+                'password' => Hash::make('password'),
+                'role' => 'admin_spbu',
+                'is_active' => true,
+                'spbu_id' => $spbuPasteur->id,
+            ]);
+        }
+
+        $spbuDago = $spbus->where('code', '34.121.05')->first();
+        if ($spbuDago) {
+            User::updateOrCreate(['email' => 'adminspbu2@bbm.com'], [
+                'name' => 'Admin SPBU Dago',
+                'password' => Hash::make('password'),
+                'role' => 'admin_spbu',
+                'is_active' => true,
+                'spbu_id' => $spbuDago->id,
+            ]);
+        }
+
         // ── 5. QR CODES ──────────────────────────────────────────────────────
         Distribution::truncate();
         QrCode::truncate();
@@ -161,6 +183,8 @@ class DatabaseSeeder extends Seeder
             [
                 ['Admin Pusat', 'adminpusat@bbm.com', 'password'],
                 ['Admin Depo', 'admindepo@bbm.com', 'password'],
+                ['Admin SPBU 1 (Pasteur)', 'adminspbu1@bbm.com', 'password'],
+                ['Admin SPBU 2 (Dago)', 'adminspbu2@bbm.com', 'password'],
                 ['Driver 1', 'driver1@bbm.com', 'password'],
                 ['Driver 2', 'driver2@bbm.com', 'password'],
                 ['Driver 3', 'driver3@bbm.com', 'password'],

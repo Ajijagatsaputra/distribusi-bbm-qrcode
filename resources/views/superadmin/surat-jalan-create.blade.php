@@ -24,13 +24,17 @@
             <form method="POST" action="{{ route('superadmin.surat-jalan.store') }}" class="space-y-6">
                 @csrf
 
+                @if($pesanan)
+                    <input type="hidden" name="pesanan_id" value="{{ $pesanan->id }}">
+                @endif
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- DRIVER --}}
                     <div class="flex flex-col gap-2">
-                        <label for="driver_id" class="text-sm font-bold text-slate-700">Driver (Operator)</label>
-                        <select name="driver_id" id="driver_id" required
+                        <label for="driver_id" class="text-sm font-bold text-slate-700">Driver (Operator) - Opsional</label>
+                        <select name="driver_id" id="driver_id"
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800">
-                            <option value="" disabled selected>Pilih Driver...</option>
+                            <option value="" selected>Pilih Driver...</option>
                             @foreach($drivers as $driver)
                                 <option value="{{ $driver->id }}" {{ old('driver_id') == $driver->id ? 'selected' : '' }}>
                                     {{ $driver->name }} ({{ $driver->email }})
@@ -47,10 +51,10 @@
                         <label for="spbu_id" class="text-sm font-bold text-slate-700">SPBU Tujuan</label>
                         <select name="spbu_id" id="spbu_id" required
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800">
-                            <option value="" disabled selected>Pilih SPBU Tujuan...</option>
+                            <option value="" disabled {{ !$pesanan ? 'selected' : '' }}>Pilih SPBU Tujuan...</option>
                             @foreach($spbus as $spbu)
-                                <option value="{{ $spbu->id }}" {{ old('spbu_id') == $spbu->id ? 'selected' : '' }}>
-                                    {{ $spbu->name }} - {{ $spbu->location }}
+                                <option value="{{ $spbu->id }}" {{ (old('spbu_id') ?? ($pesanan->spbu_id ?? '')) == $spbu->id ? 'selected' : '' }}>
+                                    {{ $spbu->name }} - {{ $spbu->location ?? $spbu->address }}
                                 </option>
                             @endforeach
                         </select>
@@ -64,9 +68,9 @@
                         <label for="fuel_type_id" class="text-sm font-bold text-slate-700">Jenis BBM</label>
                         <select name="fuel_type_id" id="fuel_type_id" required
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800">
-                            <option value="" disabled selected>Pilih Jenis BBM...</option>
+                            <option value="" disabled {{ !$pesanan ? 'selected' : '' }}>Pilih Jenis BBM...</option>
                             @foreach($fuelTypes as $fuel)
-                                <option value="{{ $fuel->id }}" {{ old('fuel_type_id') == $fuel->id ? 'selected' : '' }}>
+                                <option value="{{ $fuel->id }}" {{ (old('fuel_type_id') ?? ($pesanan->fuel_type_id ?? '')) == $fuel->id ? 'selected' : '' }}>
                                     {{ $fuel->name }} ({{ $fuel->code }})
                                 </option>
                             @endforeach
@@ -79,8 +83,9 @@
                     {{-- VOLUME (LITER) --}}
                     <div class="flex flex-col gap-2">
                         <label for="volume_liter" class="text-sm font-bold text-slate-700">Volume (Liter)</label>
-                        <input type="number" name="volume_liter" id="volume_liter" value="{{ old('volume_liter') }}"
-                            placeholder="Contoh: 8000" min="100" required
+                        <input type="number" name="volume_liter" id="volume_liter"
+                            value="{{ old('volume_liter') ?? ($pesanan->volume_liter ?? '') }}" placeholder="Contoh: 8000"
+                            min="100" required
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800" />
                         @error('volume_liter')
                             <span class="text-xs text-pertamina-red font-bold">{{ $message }}</span>
@@ -89,9 +94,10 @@
 
                     {{-- NOMOR POLISI ARMADA --}}
                     <div class="flex flex-col gap-2">
-                        <label for="vehicle_plate" class="text-sm font-bold text-slate-700">Nomor Polisi Armada</label>
+                        <label for="vehicle_plate" class="text-sm font-bold text-slate-700">Nomor Polisi Armada -
+                            Opsional</label>
                         <input type="text" name="vehicle_plate" id="vehicle_plate" value="{{ old('vehicle_plate') }}"
-                            placeholder="Contoh: B 9012 UO" required
+                            placeholder="Contoh: B 9012 UO"
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800" />
                         @error('vehicle_plate')
                             <span class="text-xs text-pertamina-red font-bold">{{ $message }}</span>

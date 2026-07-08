@@ -25,6 +25,7 @@
                     <option value="admin_pusat">Super Admin</option>
                     <option value="admin_depo">Admin</option>
                     <option value="driver">Operator</option>
+                    <option value="admin_spbu">Admin SPBU</option>
                 </select>
                 <span class="absolute w-4 h-4 -translate-y-1/2 pointer-events-none material-symbols-outlined text-[16px] text-slate-400 right-3 top-1/2">expand_more</span>
             </div>
@@ -58,7 +59,7 @@
     @endif
 
     {{-- ROLE EXPLANATION (Moved up for better UX flow) --}}
-    <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-4">
         <div class="p-6 transition-all duration-300 bg-white border shadow-sm border-slate-200/60 rounded-2xl dark:bg-slate-800 dark:border-slate-700/50 hover:shadow-md">
             <div class="flex items-center gap-3 mb-3">
                 <div class="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
@@ -74,9 +75,9 @@
                 <div class="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                     <span class="material-symbols-outlined">manage_accounts</span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white">Admin (<span id="count-a">{{ $stats['admin_depo'] }}</span>)</h4>
+                <h4 class="font-bold text-slate-900 dark:text-white">Admin Depo (<span id="count-a">{{ $stats['admin_depo'] }}</span>)</h4>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Kontrol wilayah manajemen. Kelola QR Code operasional, Reports wilayah.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Verifikasi surat jalan, input data plat nomor kendaraan, dan cetak barcode.</p>
         </div>
 
         <div class="p-6 transition-all duration-300 bg-white border shadow-sm border-slate-200/60 rounded-2xl dark:bg-slate-800 dark:border-slate-700/50 hover:shadow-md">
@@ -84,9 +85,19 @@
                 <div class="p-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                     <span class="material-symbols-outlined">engineering</span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white">Operator (<span id="count-o">{{ $stats['driver'] }}</span>)</h4>
+                <h4 class="font-bold text-slate-900 dark:text-white">Driver (<span id="count-o">{{ $stats['driver'] }}</span>)</h4>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Akses khusus lapangan (SPBU/Terminal). Pemindaian QR, validasi & riwayat.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Lihat penugasan Surat Jalan, ambil barcode pengiriman, dan jalankan distribusi.</p>
+        </div>
+
+        <div class="p-6 transition-all duration-300 bg-white border shadow-sm border-slate-200/60 rounded-2xl dark:bg-slate-800 dark:border-slate-700/50 hover:shadow-md">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                    <span class="material-symbols-outlined">storefront</span>
+                </div>
+                <h4 class="font-bold text-slate-900 dark:text-white">Admin SPBU (<span id="count-spbu">{{ $stats['admin_spbu'] }}</span>)</h4>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Melakukan input pemesanan BBM dan scan barcode driver untuk verifikasi selesai.</p>
         </div>
     </div>
 
@@ -127,10 +138,15 @@
                                 $avatarBg = 'bg-purple-600';
                                 $roleData = 'admin_pusat';
                             } elseif ($u->role === 'admin_depo') {
-                                $roleName = 'Admin';
+                                $roleName = 'Admin Depo';
                                 $roleClass = 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50';
                                 $avatarBg = 'bg-pertamina-blue';
                                 $roleData = 'admin_depo';
+                            } elseif ($u->role === 'admin_spbu') {
+                                $roleName = 'Admin SPBU';
+                                $roleClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50';
+                                $avatarBg = 'bg-amber-600';
+                                $roleData = 'admin_spbu';
                             }
                             
                             $initials = collect(explode(' ', $u->name))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->join('');
@@ -154,9 +170,12 @@
                                 <p class="font-medium text-slate-600 dark:text-slate-400 email-cell">{{ $u->email }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full {{ $roleClass }} role-cell">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase rounded-full {{ $roleClass }} role-cell" data-spbu-id="{{ $u->spbu_id }}">
                                     {{ $roleName }}
                                 </span>
+                                @if($u->role === 'admin_spbu' && $u->spbu)
+                                    <p class="text-xs text-slate-500 mt-1 font-semibold dark:text-slate-400">{{ $u->spbu->name }}</p>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <label class="relative inline-flex items-center cursor-pointer">
@@ -233,6 +252,17 @@
                         <select id="userRole" name="role" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20" required>
                             <option value="admin_depo">Admin Depo</option>
                             <option value="driver">Driver (Operator Lapangan)</option>
+                            <option value="admin_spbu">Admin SPBU</option>
+                        </select>
+                    </div>
+
+                    <div id="spbuSelectArea" class="hidden">
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">SPBU Asosiasi</label>
+                        <select id="userSpbu" name="spbu_id" class="w-full px-4 py-3 text-sm transition-all border outline-none rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
+                            <option value="">-- Pilih SPBU --</option>
+                            @foreach($spbus as $spbu)
+                                <option value="{{ $spbu->id }}">{{ $spbu->name }} ({{ $spbu->code }})</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -307,12 +337,19 @@
     function openUserModal(mode, id = null) {
         const form = document.getElementById('userForm');
         const roleSelect = document.getElementById('userRole');
+        const spbuArea = document.getElementById('spbuSelectArea');
+        const spbuSelect = document.getElementById('userSpbu');
         
         // Remove admin_pusat option if it exists from previous edit
         const adminPusatOpt = roleSelect.querySelector('option[value="admin_pusat"]');
         if (adminPusatOpt) {
             adminPusatOpt.remove();
         }
+        
+        // Hide SPBU select by default
+        spbuArea.classList.add('hidden');
+        spbuSelect.required = false;
+        spbuSelect.value = '';
         
         if (mode === 'add') {
             form.reset();
@@ -341,6 +378,8 @@
             document.getElementById('userEmail').value = row.querySelector('.email-cell').textContent.trim();
             
             const rText = row.querySelector('.role-cell').textContent.trim();
+            const spbuId = row.querySelector('.role-cell').dataset.spbuId;
+            
             if (rText === 'Super Admin') {
                 // If editing a Super Admin, temporarily add the option back so it shows correctly
                 const opt = document.createElement('option');
@@ -348,17 +387,35 @@
                 opt.textContent = 'Super Admin';
                 roleSelect.insertBefore(opt, roleSelect.firstChild);
                 roleSelect.value = 'admin_pusat';
-            } else if (rText === 'Admin') {
+            } else if (rText === 'Admin Depo') {
                 roleSelect.value = 'admin_depo';
-            } else if (rText === 'Operator') {
+            } else if (rText === 'Driver' || rText === 'Operator') {
                 roleSelect.value = 'driver';
+            } else if (rText === 'Admin SPBU') {
+                roleSelect.value = 'admin_spbu';
+                spbuArea.classList.remove('hidden');
+                spbuSelect.required = true;
+                spbuSelect.value = spbuId || '';
             }
         }
         toggleModal('userModal', true);
     }
     
     function closeUserModal() { toggleModal('userModal', false); }
-    
+
+    document.getElementById('userRole').addEventListener('change', function() {
+        const spbuArea = document.getElementById('spbuSelectArea');
+        const spbuSelect = document.getElementById('userSpbu');
+        if (this.value === 'admin_spbu') {
+            spbuArea.classList.remove('hidden');
+            spbuSelect.required = true;
+        } else {
+            spbuArea.classList.add('hidden');
+            spbuSelect.required = false;
+            spbuSelect.value = '';
+        }
+    });
+
     function togglePassword() {
         const p = document.getElementById('userPassword');
         p.type = p.type === 'password' ? 'text' : 'password';

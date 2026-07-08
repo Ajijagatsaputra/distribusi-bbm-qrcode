@@ -34,6 +34,7 @@ class AuthenticatedSessionController extends Controller
             'admin_pusat' => redirect()->route('superadmin.dashboard'),
             'admin_depo' => redirect()->route('admin.dashboard'),
             'driver' => redirect()->route('operator.dashboard'),
+            'admin_spbu' => redirect()->route('spbu.dashboard'),
             default => $this->logoutWithError(),
         };
     }

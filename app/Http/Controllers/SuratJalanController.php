@@ -45,35 +45,48 @@ class SuratJalanController extends Controller
     }
 
     /** Form buat surat jalan baru */
-    public function create()
+    public function create(Request $request)
     {
         $drivers = User::where('role', 'driver')->where('is_active', true)->orderBy('name')->get();
         $spbus = Spbu::where('status', 'aktif')->orderBy('name')->get();
         $fuelTypes = FuelType::where('status', 'aktif')->orderBy('name')->get();
-        return view('superadmin.surat-jalan-create', compact('drivers', 'spbus', 'fuelTypes'));
+
+        $pesanan = null;
+        if ($request->filled('pesanan_id')) {
+            $pesanan = \App\Models\Pesanan::with(['spbu', 'fuelType'])->find($request->pesanan_id);
+        }
+
+        return view('superadmin.surat-jalan-create', compact('drivers', 'spbus', 'fuelTypes', 'pesanan'));
     }
 
     /** Simpan surat jalan baru */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'driver_id' => 'required|exists:users,id',
+            'driver_id' => 'nullable|exists:users,id',
             'spbu_id' => 'required|exists:spbus,id',
             'fuel_type_id' => 'required|exists:fuel_types,id',
             'volume_liter' => 'required|integer|min:100',
-            'vehicle_plate' => 'required|string|max:15',
+            'vehicle_plate' => 'nullable|string|max:15',
             'tanggal_kirim' => 'required|date|after_or_equal:today',
             'catatan' => 'nullable|string|max:500',
+            'pesanan_id' => 'nullable|exists:pesanans,id',
         ]);
 
-        SuratJalan::create(array_merge($validated, [
+        $suratJalan = SuratJalan::create(array_merge($validated, [
             'kode_surat_jalan' => SuratJalan::generateKode(),
             'status' => 'menunggu',
             'created_by' => auth()->id(),
         ]));
 
+        if ($suratJalan->pesanan_id) {
+            \App\Models\Pesanan::where('id', $suratJalan->pesanan_id)->update([
+                'status' => 'disetujui'
+            ]);
+        }
+
         return redirect()->route('superadmin.surat-jalan.index')
-            ->with('success', 'Surat Jalan berhasil dibuat dan dikirim ke driver.');
+            ->with('success', 'Surat Jalan berhasil dibuat.');
     }
 
     /** Batalkan surat jalan */
@@ -107,17 +120,26 @@ class SuratJalanController extends Controller
             'selesai' => SuratJalan::where('status', 'selesai')->count(),
         ];
 
-        return view('admin.verifikasi-surat-jalan', compact('suratJalans', 'stats'));
+        $drivers = User::where('role', 'driver')->where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.verifikasi-surat-jalan', compact('suratJalans', 'stats', 'drivers'));
     }
 
     /** Admin Depo: Verifikasi surat jalan (cocok dengan driver) */
-    public function verify(SuratJalan $suratJalan)
+    public function verify(Request $request, SuratJalan $suratJalan)
     {
         if ($suratJalan->status !== 'menunggu') {
             return back()->with('error', 'Surat Jalan ini sudah diverifikasi.');
         }
 
+        $validated = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+            'vehicle_plate' => 'required|string|max:15',
+        ]);
+
         $suratJalan->update([
+            'driver_id' => $validated['driver_id'],
+            'vehicle_plate' => strtoupper($validated['vehicle_plate']),
             'status' => 'terverifikasi',
             'verified_by' => auth()->id(),
             'verified_at' => now(),
@@ -134,6 +156,11 @@ class SuratJalanController extends Controller
         }
 
         $suratJalan->update(['status' => 'dikirim']);
+
+        if ($suratJalan->pesanan_id) {
+            $suratJalan->pesanan->update(['status' => 'dikirim']);
+        }
+
         return back()->with('success', "Driver {$suratJalan->driver->name} sudah berangkat menuju SPBU.");
     }
 

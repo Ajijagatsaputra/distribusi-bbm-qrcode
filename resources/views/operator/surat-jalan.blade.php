@@ -225,39 +225,47 @@
                                 </div>
                             </div>
 
-                            {{-- SCANNER ACTION AREA --}}
-                            <div
-                                class="w-full lg:w-96 glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
+                            {{-- SCANNER & QR CODE DISPLAY AREA --}}
+                            <div class="w-full lg:w-96 flex flex-col gap-4">
                                 @if($active->status === 'dikirim')
-                                    <div class="text-center space-y-2">
-                                        <span
-                                            class="material-symbols-outlined text-pertamina-blue text-4xl animate-bounce">qr_code_scanner</span>
-                                        <h4 class="font-bold text-slate-900">Bongkar BBM di SPBU</h4>
-                                        <p class="text-xs text-slate-500">Pindai QR Code di SPBU untuk menyelesaikan pengiriman
-                                        </p>
+                                    {{-- QR CODE UNTUK DISCAN SPBU --}}
+                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-3">
+                                        <div class="text-center space-y-1">
+                                            <h4 class="font-bold text-slate-900">QR Code Surat Jalan</h4>
+                                            <p class="text-[11px] text-slate-500 font-semibold leading-tight">Tunjukkan QR Code ini kepada Admin SPBU untuk dipindai saat tiba di lokasi</p>
+                                        </div>
+                                        <div id="driverSjQRCode" class="flex items-center justify-center p-2.5 bg-white border border-slate-200 size-40 rounded-xl shadow-sm"></div>
+                                        <span class="font-mono font-bold text-xs text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">{{ $active->kode_surat_jalan }}</span>
                                     </div>
-                                    <button onclick="startScanner('{{ $active->id }}')"
-                                        class="w-full h-12 bg-pertamina-blue hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-glow-blue flex items-center justify-center gap-2">
-                                        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-                                        <span>Aktifkan Scanner</span>
-                                    </button>
-                                    <button onclick="openMockInput('{{ $active->id }}')"
-                                        class="w-full text-xs text-slate-500 hover:text-pertamina-blue font-bold transition-all underline">
-                                        Input Token Manual (Simulasi)
-                                    </button>
+                                    
+                                    {{-- ALT SCANNER (IF DRIVER PREFERS TO SCAN) --}}
+                                    <div class="glass-panel p-4 rounded-xl border border-slate-200/50 bg-slate-50/50 flex flex-col items-center justify-center space-y-2">
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase">Alternatif Verifikasi</p>
+                                        <button onclick="startScanner('{{ $active->id }}')"
+                                            class="w-full py-2 bg-pertamina-blue/10 hover:bg-pertamina-blue/20 text-pertamina-blue text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5">
+                                            <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+                                            <span>Scan QR SPBU</span>
+                                        </button>
+                                        <button onclick="openMockInput('{{ $active->id }}')"
+                                            class="w-full text-[10px] text-slate-450 hover:text-pertamina-blue transition-all underline">
+                                            Input Token Manual (Simulasi)
+                                        </button>
+                                    </div>
                                 @elseif($active->status === 'terverifikasi')
-                                    <div class="text-center p-4 space-y-2">
-                                        <span class="material-symbols-outlined text-amber-500 text-4xl">local_shipping</span>
-                                        <h4 class="font-bold text-slate-900">Menunggu Lepas Kirim</h4>
-                                        <p class="text-xs text-slate-500">Silakan hubungi Admin Depo untuk menandai
-                                            keberangkatan Anda ke jalan.</p>
+                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
+                                        <div class="text-center p-4 space-y-2">
+                                            <span class="material-symbols-outlined text-amber-500 text-4xl animate-pulse">local_shipping</span>
+                                            <h4 class="font-bold text-slate-900">Menunggu Lepas Kirim</h4>
+                                            <p class="text-xs text-slate-500 leading-normal">Silakan hubungi Admin Depo untuk menandai keberangkatan Anda ke jalan.</p>
+                                        </div>
                                     </div>
                                 @else
-                                    <div class="text-center p-4 space-y-2">
-                                        <span class="material-symbols-outlined text-amber-500 text-4xl">hourglass_empty</span>
-                                        <h4 class="font-bold text-slate-900">Menunggu Verifikasi Depo</h4>
-                                        <p class="text-xs text-slate-500">Tunjukkan Surat Jalan fisik kepada petugas Depo untuk
-                                            diverifikasi.</p>
+                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
+                                        <div class="text-center p-4 space-y-2">
+                                            <span class="material-symbols-outlined text-amber-500 text-4xl">hourglass_empty</span>
+                                            <h4 class="font-bold text-slate-900">Menunggu Verifikasi Depo</h4>
+                                            <p class="text-xs text-slate-500 leading-normal">Tunjukkan Surat Jalan fisik kepada petugas Depo untuk diverifikasi.</p>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -391,7 +399,24 @@
     </div>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
+        @if($active && $active->status === 'dikirim')
+            document.addEventListener('DOMContentLoaded', function() {
+                const container = document.getElementById('driverSjQRCode');
+                if (container) {
+                    container.innerHTML = '';
+                    QRCode.toCanvas(
+                        '{{ $active->kode_surat_jalan }}',
+                        { width: 160, margin: 1, color: { dark: '#005eb8', light: '#ffffff' } },
+                        function (err, canvas) {
+                            if (!err) container.appendChild(canvas);
+                        }
+                    );
+                }
+            });
+        @endif
+
         let html5QrcodeScanner = null;
         let activeSjId = null;
 

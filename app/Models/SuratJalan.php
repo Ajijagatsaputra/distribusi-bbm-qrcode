@@ -25,6 +25,7 @@ class SuratJalan extends Model
         'verified_by',
         'verified_at',
         'completed_at',
+        'pesanan_id',
     ];
 
     protected $casts = [
@@ -34,6 +35,11 @@ class SuratJalan extends Model
     ];
 
     // ── Relationships ──────────────────────────────────────────────────
+    public function pesanan()
+    {
+        return $this->belongsTo(Pesanan::class, 'pesanan_id');
+    }
+
     public function driver()
     {
         return $this->belongsTo(User::class, 'driver_id');

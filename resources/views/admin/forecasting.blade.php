@@ -75,7 +75,8 @@
                 class="p-6 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800">
                 <div class="flex items-center justify-between mb-4">
                     <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Prediksi SMA (N=3) -
-                        {{ $nextPeriodLabel }}</p>
+                        {{ $nextPeriodLabel }}
+                    </p>
                     <div class="flex items-center justify-center rounded-lg size-10 bg-orange-500/10">
                         <span class="text-xl text-orange-500 material-symbols-outlined">timeline</span>
                     </div>
@@ -95,7 +96,8 @@
                 class="p-6 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800">
                 <div class="flex items-center justify-between mb-4">
                     <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Prediksi SLR -
-                        {{ $nextPeriodLabel }}</p>
+                        {{ $nextPeriodLabel }}
+                    </p>
                     <div class="flex items-center justify-center rounded-lg size-10 bg-pertamina-blue/10">
                         <span class="text-xl text-pertamina-blue material-symbols-outlined">trending_up</span>
                     </div>
@@ -206,7 +208,8 @@
                                     <td class="px-5 py-4 font-semibold text-slate-700 dark:text-slate-300">{{ $data['period'] }}
                                     </td>
                                     <td class="px-5 py-4 text-right font-mono font-bold text-slate-900 dark:text-white">
-                                        {{ number_format($data['actual'], 0, ',', '.') }} L</td>
+                                        {{ number_format($data['actual'], 0, ',', '.') }} L
+                                    </td>
                                     <td class="px-5 py-4 text-right font-mono text-orange-600 dark:text-orange-400">
                                         {{ $data['sma'] ? number_format($data['sma'], 0, ',', '.') . ' L' : '-' }}
                                     </td>
@@ -272,10 +275,16 @@
                             </div>
                             <p>Untuk periode <span
                                     class="font-bold text-slate-800 dark:text-slate-300">{{ $nextPeriodLabel }}</span>:</p>
+                            @php
+                                $countData = count($tableData);
+                                $val5 = $countData >= 1 ? $tableData[$countData - 1]['actual'] : 0;
+                                $val4 = $countData >= 2 ? $tableData[$countData - 2]['actual'] : 0;
+                                $val3 = $countData >= 3 ? $tableData[$countData - 3]['actual'] : 0;
+                            @endphp
                             <p class="font-mono text-[11px] text-orange-600 dark:text-orange-400 mt-1">
-                                F = ({{ number_format($tableData[5]['actual'], 0, ',', '.') }} +
-                                {{ number_format($tableData[4]['actual'], 0, ',', '.') }} +
-                                {{ number_format($tableData[3]['actual'], 0, ',', '.') }}) / 3 =
+                                F = ({{ number_format($val5, 0, ',', '.') }} +
+                                {{ number_format($val4, 0, ',', '.') }} +
+                                {{ number_format($val3, 0, ',', '.') }}) / 3 =
                                 <strong>{{ number_format($nextSmaForecast, 0, ',', '.') }} L</strong>
                             </p>
                         </div>

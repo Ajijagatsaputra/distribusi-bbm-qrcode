@@ -272,10 +272,16 @@
                             </div>
                             <p>Untuk periode <span
                                     class="font-bold text-slate-800 dark:text-slate-300">{{ $nextPeriodLabel }}</span>:</p>
+                            @php
+                                $countData = count($tableData);
+                                $val5 = $countData >= 1 ? $tableData[$countData - 1]['actual'] : 0;
+                                $val4 = $countData >= 2 ? $tableData[$countData - 2]['actual'] : 0;
+                                $val3 = $countData >= 3 ? $tableData[$countData - 3]['actual'] : 0;
+                            @endphp
                             <p class="font-mono text-[11px] text-orange-600 dark:text-orange-400 mt-1">
-                                F = ({{ number_format($tableData[5]['actual'], 0, ',', '.') }} +
-                                {{ number_format($tableData[4]['actual'], 0, ',', '.') }} +
-                                {{ number_format($tableData[3]['actual'], 0, ',', '.') }}) / 3 =
+                                F = ({{ number_format($val5, 0, ',', '.') }} +
+                                {{ number_format($val4, 0, ',', '.') }} +
+                                {{ number_format($val3, 0, ',', '.') }}) / 3 =
                                 <strong>{{ number_format($nextSmaForecast, 0, ',', '.') }} L</strong>
                             </p>
                         </div>

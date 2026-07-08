@@ -19,9 +19,10 @@ class RedirectIfAuthenticated
     {
         if (Auth::check() && $request->routeIs('login')) {
             return match (Auth::user()->role) {
-                'superadmin' => redirect()->route('superadmin.dashboard'),
-                'admin'      => redirect()->route('admin.dashboard'),
-                'operator'   => redirect()->route('operator.dashboard'),
+                'admin_pusat' => redirect()->route('superadmin.dashboard'),
+                'admin_depo'  => redirect()->route('admin.dashboard'),
+                'driver'      => redirect()->route('operator.dashboard'),
+                'admin_spbu'  => redirect()->route('spbu.dashboard'),
                 default      => redirect('/'),
             };
         }

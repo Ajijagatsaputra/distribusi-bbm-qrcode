@@ -328,7 +328,7 @@ class DistributionController extends Controller
         // 6 Bulan terakhir secara berurutan
         $periods = [];
         for ($i = 5; $i >= 0; $i--) {
-            $periods[] = now()->subMonths($i)->format('Y-m');
+            $periods[] = now()->firstOfMonth()->subMonths($i)->format('Y-m');
         }
 
         // Tentukan baseline volume jika database kosong

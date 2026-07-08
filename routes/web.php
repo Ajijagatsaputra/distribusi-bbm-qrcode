@@ -6,6 +6,7 @@ use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\SuratJalanController;
+use App\Http\Controllers\PesananController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Root → redirect to login ───────────────────────────────────────────────
@@ -53,6 +54,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(fu
     Route::get('/surat-jalan/create', [SuratJalanController::class, 'create'])->name('surat-jalan.create');
     Route::post('/surat-jalan', [SuratJalanController::class, 'store'])->name('surat-jalan.store');
     Route::patch('/surat-jalan/{suratJalan}/cancel', [SuratJalanController::class, 'destroy'])->name('surat-jalan.cancel');
+
+    // SPBU Orders Management (Admin Pusat)
+    Route::get('/orders', [PesananController::class, 'superadminIndex'])->name('orders.index');
+    Route::patch('/orders/{pesanan}/reject', [PesananController::class, 'superadminReject'])->name('orders.reject');
 });
 
 // ─── ADMIN DEPO ───────────────────────────────────────────────────────────────
@@ -90,6 +95,15 @@ Route::prefix('operator')->name('operator.')->middleware(['auth'])->group(functi
     // History distribusi milik driver sendiri
     Route::get('/history', [DistributionController::class, 'history'])->name('history');
     Route::get('/profile', fn() => view('operator.profile'))->name('profile');
+});
+
+// ─── ADMIN SPBU ──────────────────────────────────────────────────────────────
+Route::prefix('spbu')->name('spbu.')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [PesananController::class, 'dashboard'])->name('dashboard');
+    Route::get('/orders', [PesananController::class, 'index'])->name('orders.index');
+    Route::post('/orders', [PesananController::class, 'store'])->name('orders.store');
+    Route::get('/verify', [PesananController::class, 'showScanPage'])->name('verify.scan');
+    Route::post('/verify/submit', [PesananController::class, 'verifyBarcode'])->name('verify.submit');
 });
 
 // ─── QR VALIDATE (JSON) ──────────────────────────────────────────────────────

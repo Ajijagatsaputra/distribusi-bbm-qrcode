@@ -15,14 +15,16 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('role')->orderBy('name')->get();
+        $users = User::with('spbu')->orderBy('role')->orderBy('name')->get();
         $stats = [
             'admin_pusat' => $users->where('role', 'admin_pusat')->count(),
             'admin_depo' => $users->where('role', 'admin_depo')->count(),
             'driver' => $users->where('role', 'driver')->count(),
+            'admin_spbu' => $users->where('role', 'admin_spbu')->count(),
             'total' => $users->count(),
         ];
-        return view('superadmin.users-management', compact('users', 'stats'));
+        $spbus = Spbu::where('status', 'aktif')->orderBy('name')->get();
+        return view('superadmin.users-management', compact('users', 'stats', 'spbus'));
     }
 
     public function store(Request $request)
@@ -30,8 +32,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => ['required', Rule::in(['admin_pusat', 'admin_depo', 'driver'])],
+            'role' => ['required', Rule::in(['admin_pusat', 'admin_depo', 'driver', 'admin_spbu'])],
             'password' => 'required|min:6',
+            'spbu_id' => 'required_if:role,admin_spbu|nullable|exists:spbus,id',
         ]);
 
         User::create([
@@ -40,6 +43,7 @@ class UserController extends Controller
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
             'is_active' => true,
+            'spbu_id' => $validated['role'] === 'admin_spbu' ? $validated['spbu_id'] : null,
         ]);
 
         return redirect()->route('superadmin.users-management')
@@ -51,10 +55,16 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'role' => ['required', Rule::in(['admin_pusat', 'admin_depo', 'driver'])],
+            'role' => ['required', Rule::in(['admin_pusat', 'admin_depo', 'driver', 'admin_spbu'])],
+            'spbu_id' => 'required_if:role,admin_spbu|nullable|exists:spbus,id',
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'spbu_id' => $validated['role'] === 'admin_spbu' ? $validated['spbu_id'] : null,
+        ]);
 
         if ($request->filled('password')) {
             $request->validate(['password' => 'min:6']);

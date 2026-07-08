@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'spbu_id',
     ];
 
     public function isAdminPusat(): bool
@@ -36,6 +37,15 @@ class User extends Authenticatable
     public function isDriver(): bool
     {
         return $this->role === 'driver';
+    }
+    public function isAdminSpbu(): bool
+    {
+        return $this->role === 'admin_spbu';
+    }
+
+    public function spbu()
+    {
+        return $this->belongsTo(Spbu::class, 'spbu_id');
     }
 
     public function distributions()

@@ -1,4 +1,5 @@
-<aside class="w-72 glass-panel border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col fixed h-full z-20">
+<aside
+    class="w-72 glass-panel border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col fixed top-0 left-0 h-full z-20">
     <div class="flex flex-col h-full px-6 py-8">
         <!-- Brand -->
         <div class="flex items-center gap-4 mb-12 px-2">
@@ -34,6 +35,16 @@
                 <span
                     class="material-symbols-outlined group-hover:scale-110 transition-transform text-[20px]">local_shipping</span>
                 <span class="text-sm">Surat Jalan</span>
+            </a>
+
+            <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->is('superadmin/orders*') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
+                href="/superadmin/orders">
+                @if(request()->is('superadmin/orders*'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-pertamina-blue rounded-r-full"></div>
+                @endif
+                <span
+                    class="material-symbols-outlined group-hover:scale-110 transition-transform text-[20px]">shopping_cart</span>
+                <span class="text-sm">Pemesanan SPBU</span>
             </a>
 
             <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->is('superadmin/users-management') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"

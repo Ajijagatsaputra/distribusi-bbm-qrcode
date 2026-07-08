@@ -31,10 +31,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- DRIVER --}}
                     <div class="flex flex-col gap-2">
-                        <label for="driver_id" class="text-sm font-bold text-slate-700">Driver (Operator) - Opsional</label>
-                        <select name="driver_id" id="driver_id"
+                        <label for="driver_id" class="text-sm font-bold text-slate-700">Driver (Operator)</label>
+                        <select name="driver_id" id="driver_id" required
                             class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800">
-                            <option value="" selected>Pilih Driver...</option>
+                            <option value="" disabled selected>Pilih Driver...</option>
                             @foreach($drivers as $driver)
                                 <option value="{{ $driver->id }}" {{ old('driver_id') == $driver->id ? 'selected' : '' }}>
                                     {{ $driver->name }} ({{ $driver->email }})
@@ -92,17 +92,7 @@
                         @enderror
                     </div>
 
-                    {{-- NOMOR POLISI ARMADA --}}
-                    <div class="flex flex-col gap-2">
-                        <label for="vehicle_plate" class="text-sm font-bold text-slate-700">Nomor Polisi Armada -
-                            Opsional</label>
-                        <input type="text" name="vehicle_plate" id="vehicle_plate" value="{{ old('vehicle_plate') }}"
-                            placeholder="Contoh: B 9012 UO"
-                            class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pertamina-blue/50 dark:bg-slate-900 dark:border-slate-800" />
-                        @error('vehicle_plate')
-                            <span class="text-xs text-pertamina-red font-bold">{{ $message }}</span>
-                        @enderror
-                    </div>
+
 
                     {{-- TANGGAL PENGIRIMAN --}}
                     <div class="flex flex-col gap-2">

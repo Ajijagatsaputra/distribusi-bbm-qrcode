@@ -133,19 +133,19 @@
                                         $label = $sj->statusLabel();
                                     @endphp
                                     <span class="px-3 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5
-                                                    @if($color === 'amber') bg-amber-100 text-amber-800
-                                                    @elseif($color === 'blue') bg-blue-100 text-blue-800
-                                                    @elseif($color === 'purple') bg-purple-100 text-purple-800
-                                                    @elseif($color === 'green') bg-green-100 text-green-800
-                                                    @else bg-red-100 text-red-800
-                                                    @endif">
+                                                                            @if($color === 'amber') bg-amber-100 text-amber-800
+                                                                            @elseif($color === 'blue') bg-blue-100 text-blue-800
+                                                                            @elseif($color === 'purple') bg-purple-100 text-purple-800
+                                                                            @elseif($color === 'green') bg-green-100 text-green-800
+                                                                            @else bg-red-100 text-red-800
+                                                                            @endif">
                                         <span class="w-1.5 h-1.5 rounded-full
-                                                        @if($color === 'amber') bg-amber-500
-                                                        @elseif($color === 'blue') bg-blue-500
-                                                        @elseif($color === 'purple') bg-purple-500
-                                                        @elseif($color === 'green') bg-green-500
-                                                        @else bg-red-500
-                                                        @endif"></span>
+                                                                                @if($color === 'amber') bg-amber-500
+                                                                                @elseif($color === 'blue') bg-blue-500
+                                                                                @elseif($color === 'purple') bg-purple-500
+                                                                                @elseif($color === 'green') bg-green-500
+                                                                                @else bg-red-500
+                                                                                @endif"></span>
                                         {{ $label }}
                                     </span>
                                 </td>
@@ -153,7 +153,7 @@
                                     <div class="flex items-center justify-end gap-2">
                                         @if($sj->status === 'menunggu')
                                             <button type="button"
-                                                onclick="openVerifyModal('{{ $sj->id }}', '{{ $sj->driver_id }}', '{{ $sj->vehicle_plate }}', '{{ $sj->kode_surat_jalan }}')"
+                                                onclick="openVerifyModal('{{ $sj->id }}', '{{ $sj->driver ? $sj->driver->name : 'Tidak Ada Driver' }}', '{{ $sj->vehicle_plate }}', '{{ $sj->kode_surat_jalan }}')"
                                                 class="bg-pertamina-blue hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1">
                                                 <span class="material-symbols-outlined text-[16px]">verified</span>
                                                 <span>Verifikasi</span>
@@ -248,13 +248,8 @@
                     <div>
                         <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-350">Driver
                             (Operator)</label>
-                        <select name="driver_id" id="verifyDriver" required
-                            class="w-full px-4 py-2.5 text-sm border rounded-xl border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800 focus:ring-2 focus:ring-pertamina-blue/20">
-                            <option value="">Pilih Driver...</option>
-                            @foreach($drivers as $driver)
-                                <option value="{{ $driver->id }}">{{ $driver->name }} ({{ $driver->email }})</option>
-                            @endforeach
-                        </select>
+                        <div class="w-full px-4 py-2.5 text-sm font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-850 dark:text-slate-250"
+                            id="verifyDriverName">-</div>
                     </div>
 
                     <div>
@@ -337,10 +332,10 @@
     {{-- Script support --}}
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
-        function openVerifyModal(id, driverId, plate, codeSJ) {
+        function openVerifyModal(id, driverName, plate, codeSJ) {
             document.getElementById('verifyForm').action = `/admin/surat-jalan/${id}/verify`;
             document.getElementById('verifySjCode').textContent = codeSJ;
-            document.getElementById('verifyDriver').value = driverId || '';
+            document.getElementById('verifyDriverName').textContent = driverName;
             document.getElementById('verifyPlate').value = plate || '';
 
             const el = document.getElementById('verifyModal');
@@ -392,37 +387,37 @@
             // Create a temporary style element for print styling
             const style = document.createElement('style');
             style.innerHTML = `
-                    @media print {
-                        body {
-                            background: white !important;
-                            color: black !important;
-                        }
-                        .no-print {
-                            display: none !important;
-                        }
-                    }
-                `;
+                                @media print {
+                                    body {
+                                        background: white !important;
+                                        color: black !important;
+                                    }
+                                    .no-print {
+                                        display: none !important;
+                                    }
+                                }
+                            `;
             document.head.appendChild(style);
 
             const popupWin = window.open('', '_blank', 'width=600,height=600');
             popupWin.document.open();
             popupWin.document.write(`
-                    <html>
-                    <head>
-                        <title>Cetak Tiket Barcode</title>
-                        <script src="https://cdn.tailwindcss.com"><\/script>
-                        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-                        <style>
-                            body { font-family: 'Outfit', sans-serif; }
-                        </style>
-                    </head>
-                    <body class="flex flex-col items-center justify-center p-8 bg-white" onload="window.print();window.close();">
-                        <div class="border border-slate-350 p-6 rounded-2xl w-80 text-center flex flex-col items-center">
-                            \${printContent}
-                        </div>
-                    </body>
-                    </html>
-                `);
+                                <html>
+                                <head>
+                                    <title>Cetak Tiket Barcode</title>
+                                    <script src="https://cdn.tailwindcss.com"><\/script>
+                                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+                                    <style>
+                                        body { font-family: 'Outfit', sans-serif; }
+                                    </style>
+                                </head>
+                                <body class="flex flex-col items-center justify-center p-8 bg-white" onload="window.print();window.close();">
+                                    <div class="border border-slate-350 p-6 rounded-2xl w-80 text-center flex flex-col items-center">
+                                        \${printContent}
+                                    </div>
+                                </body>
+                                </html>
+                            `);
             popupWin.document.close();
             document.head.removeChild(style);
         }

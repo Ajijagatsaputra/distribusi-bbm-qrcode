@@ -63,11 +63,10 @@ class SuratJalanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'driver_id' => 'nullable|exists:users,id',
+            'driver_id' => 'required|exists:users,id',
             'spbu_id' => 'required|exists:spbus,id',
             'fuel_type_id' => 'required|exists:fuel_types,id',
             'volume_liter' => 'required|integer|min:100',
-            'vehicle_plate' => 'nullable|string|max:15',
             'tanggal_kirim' => 'required|date|after_or_equal:today',
             'catatan' => 'nullable|string|max:500',
             'pesanan_id' => 'nullable|exists:pesanans,id',
@@ -120,9 +119,7 @@ class SuratJalanController extends Controller
             'selesai' => SuratJalan::where('status', 'selesai')->count(),
         ];
 
-        $drivers = User::where('role', 'driver')->where('is_active', true)->orderBy('name')->get();
-
-        return view('admin.verifikasi-surat-jalan', compact('suratJalans', 'stats', 'drivers'));
+        return view('admin.verifikasi-surat-jalan', compact('suratJalans', 'stats'));
     }
 
     /** Admin Depo: Verifikasi surat jalan (cocok dengan driver) */
@@ -133,12 +130,10 @@ class SuratJalanController extends Controller
         }
 
         $validated = $request->validate([
-            'driver_id' => 'required|exists:users,id',
             'vehicle_plate' => 'required|string|max:15',
         ]);
 
         $suratJalan->update([
-            'driver_id' => $validated['driver_id'],
             'vehicle_plate' => strtoupper($validated['vehicle_plate']),
             'status' => 'terverifikasi',
             'verified_by' => auth()->id(),

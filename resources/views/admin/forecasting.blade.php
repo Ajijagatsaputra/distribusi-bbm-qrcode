@@ -26,7 +26,7 @@
         {{-- ===== FILTER PANEL ===== --}}
         <div
             class="mb-8 p-6 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800">
-            <form method="GET" action="" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <form method="GET" action="" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                 <div>
                     <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Stasiun SPBU</label>
                     <select name="spbu_id"
@@ -51,13 +51,24 @@
                         @endforeach
                     </select>
                 </div>
+                <div>
+                    <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Periode Moving
+                        Average (N)</label>
+                    <select name="sma_n"
+                        class="w-full px-4 py-2.5 text-sm transition-all border outline-none rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-pertamina-blue focus:ring-2 focus:ring-pertamina-blue/20">
+                        <option value="2" {{ $smaN == 2 ? 'selected' : '' }}>N = 2 Bulan</option>
+                        <option value="3" {{ $smaN == 3 ? 'selected' : '' }}>N = 3 Bulan (Default)</option>
+                        <option value="4" {{ $smaN == 4 ? 'selected' : '' }}>N = 4 Bulan</option>
+                        <option value="5" {{ $smaN == 5 ? 'selected' : '' }}>N = 5 Bulan</option>
+                    </select>
+                </div>
                 <div class="flex gap-3">
                     <button type="submit"
                         class="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-white transition-all shadow-lg rounded-xl bg-gradient-to-r from-pertamina-blue to-blue-600 hover:scale-105 shadow-glow-blue">
                         <span class="material-symbols-outlined text-[18px]">filter_alt</span>
                         Terapkan Filter
                     </button>
-                    @if($spbuId || $fuelTypeId)
+                    @if($spbuId || $fuelTypeId || $smaN != 3)
                         <a href="{{ request()->url() }}"
                             class="flex items-center justify-center p-2.5 text-slate-500 hover:text-pertamina-red hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl transition-all"
                             title="Reset Filter">
@@ -74,7 +85,7 @@
             <div
                 class="p-6 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800">
                 <div class="flex items-center justify-between mb-4">
-                    <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Prediksi SMA (N=3) -
+                    <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Prediksi SMA (N={{ $smaN }}) -
                         {{ $nextPeriodLabel }}
                     </p>
                     <div class="flex items-center justify-center rounded-lg size-10 bg-orange-500/10">
@@ -165,6 +176,42 @@
                 </div>
                 <div class="relative h-96 w-full">
                     <canvas id="forecastingChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== AI DECISION SUPPORT PANEL ===== --}}
+        <div
+            class="mb-8 p-6 bg-gradient-to-br from-white to-blue-50/20 border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800 dark:from-slate-900 dark:to-slate-950/30">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="flex items-center justify-center rounded-xl size-12 bg-pertamina-blue/10 text-pertamina-blue dark:bg-pertamina-blue/20">
+                        <span class="material-symbols-outlined text-[28px] animate-pulse">auto_awesome</span>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-slate-900 dark:text-white">Rekomendasi & Analisis Cerdas AI
+                        </h3>
+                        <p class="text-xs text-slate-500">Analisis naratif, peramalan tren, dan mitigasi pasokan menggunakan
+                            Generative AI</p>
+                    </div>
+                </div>
+                <div>
+                    <button id="btn-generate-ai"
+                        class="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-bold text-white transition-all shadow-md rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-pertamina-blue hover:to-blue-600 dark:from-slate-800 dark:to-slate-700 hover:scale-[102%] shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">psychology</span>
+                        Hasilkan Analisis AI
+                    </button>
+                </div>
+            </div>
+
+            <div id="ai-response-container"
+                class="p-5 bg-slate-50/50 dark:bg-slate-800/10 border border-slate-200/40 dark:border-slate-800/40 rounded-xl min-h-[100px] text-sm text-slate-600 dark:text-slate-400">
+                <div class="flex flex-col items-center justify-center py-6 text-center text-slate-400 dark:text-slate-500">
+                    <span
+                        class="material-symbols-outlined text-[40px] mb-2 text-slate-300 dark:text-slate-700">chat_bubble</span>
+                    <p class="text-xs font-medium">Klik tombol <strong>"Hasilkan Analisis AI"</strong> di atas untuk membuat
+                        rekomendasi distribusi berbasis kecerdasan buatan.</p>
                 </div>
             </div>
         </div>
@@ -266,25 +313,34 @@
                         class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
                         <div>
                             <h5 class="font-bold text-slate-800 dark:text-slate-200 mb-2">1. Single Moving Average (SMA -
-                                N=3)</h5>
+                                N={{ $smaN }})</h5>
                             <p class="mb-3">Memprediksi nilai periode berikutnya berdasarkan rata-rata $N$ periode
                                 sebelumnya:</p>
+                            @php
+                                $formulaTerms = [];
+                                for ($j = 0; $j < $smaN; $j++) {
+                                    $subscript = $j === 0 ? 't' : 't-' . $j;
+                                    $formulaTerms[] = "Y<sub>{$subscript}</sub>";
+                                }
+                                $formulaString = implode(' + ', $formulaTerms);
+                            @endphp
                             <div
                                 class="bg-white dark:bg-slate-800 p-3 rounded-lg border dark:border-slate-750 font-mono text-[11px] mb-3 text-center">
-                                F<sub>t+1</sub> = ( Y<sub>t</sub> + Y<sub>t-1</sub> + Y<sub>t-2</sub> ) / 3
+                                F<sub>t+1</sub> = ( {!! $formulaString !!} ) / {{ $smaN }}
                             </div>
                             <p>Untuk periode <span
                                     class="font-bold text-slate-800 dark:text-slate-300">{{ $nextPeriodLabel }}</span>:</p>
                             @php
                                 $countData = count($tableData);
-                                $val5 = $countData >= 1 ? $tableData[$countData - 1]['actual'] : 0;
-                                $val4 = $countData >= 2 ? $tableData[$countData - 2]['actual'] : 0;
-                                $val3 = $countData >= 3 ? $tableData[$countData - 3]['actual'] : 0;
+                                $valTerms = [];
+                                for ($j = 1; $j <= $smaN; $j++) {
+                                    // Karena $tableData berisi nilai aktual di index 0 s/d $n-1
+                                    $valTerms[] = $countData >= $j ? $tableData[$countData - $j]['actual'] : 0;
+                                }
+                                $termsString = implode(' + ', array_map(fn($v) => number_format($v, 0, ',', '.'), $valTerms));
                             @endphp
                             <p class="font-mono text-[11px] text-orange-600 dark:text-orange-400 mt-1">
-                                F = ({{ number_format($val5, 0, ',', '.') }} +
-                                {{ number_format($val4, 0, ',', '.') }} +
-                                {{ number_format($val3, 0, ',', '.') }}) / 3 =
+                                F = ({{ $termsString }}) / {{ $smaN }} =
                                 <strong>{{ number_format($nextSmaForecast, 0, ',', '.') }} L</strong>
                             </p>
                         </div>
@@ -411,6 +467,102 @@
                     }
                 }
             });
+
+            // AI Analysis AJAX Trigger
+            const btnGenerateAi = document.getElementById('btn-generate-ai');
+            const aiContainer = document.getElementById('ai-response-container');
+
+            if (btnGenerateAi && aiContainer) {
+                btnGenerateAi.addEventListener('click', function () {
+                    // Set loading state
+                    btnGenerateAi.disabled = true;
+                    const originalBtnContent = btnGenerateAi.innerHTML;
+                    btnGenerateAi.innerHTML = `
+                            <span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+                            Menganalisis...
+                        `;
+
+                    aiContainer.innerHTML = `
+                            <div class="animate-pulse space-y-3.5 py-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-pertamina-blue animate-spin text-[18px]">sync</span>
+                                    <span class="text-xs font-semibold text-slate-500">Menghubungi AI Service...</span>
+                                </div>
+                                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-11/12"></div>
+                                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/5"></div>
+                            </div>
+                        `;
+
+                    fetch('{{ route(auth()->user()->role === "admin_pusat" ? "superadmin.forecasting.ai-analysis" : "admin.forecasting.ai-analysis") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            spbu_id: '{{ $spbuId }}',
+                            fuel_type_id: '{{ $fuelTypeId }}',
+                            sma_n: '{{ $smaN }}'
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.analysis) {
+                                aiContainer.innerHTML = `
+                                    <div class="prose dark:prose-invert max-w-none text-slate-750 dark:text-slate-300 leading-relaxed text-xs sm:text-sm">
+                                        ${formatMarkdown(data.analysis)}
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-slate-200/40 dark:border-slate-800/40 flex justify-between items-center text-[10px] text-slate-400">
+                                        <span>Didukung oleh: <span class="font-semibold capitalize text-pertamina-blue">${data.provider}</span></span>
+                                        <span>Analisis Real-time</span>
+                                    </div>
+                                `;
+                            } else {
+                                throw new Error(data.message || 'Gagal memproses data dari AI.');
+                            }
+                        })
+                        .catch(error => {
+                            aiContainer.innerHTML = `
+                                <div class="flex items-start gap-2.5 text-pertamina-red py-2">
+                                    <span class="material-symbols-outlined">error</span>
+                                    <div>
+                                        <p class="font-bold text-xs">Gagal Menghasilkan Analisis</p>
+                                        <p class="text-[11px] mt-0.5">${error.message || 'Terjadi kesalahan jaringan atau server.'}</p>
+                                    </div>
+                                </div>
+                            `;
+                        })
+                        .finally(() => {
+                            btnGenerateAi.disabled = false;
+                            btnGenerateAi.innerHTML = originalBtnContent;
+                        });
+                });
+            }
+
+            function formatMarkdown(text) {
+                // Escape HTML to prevent XSS
+                let html = text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+                // Headers
+                html = html.replace(/^### (.*$)/gim, '<h5 class="text-xs font-bold text-slate-900 dark:text-white mt-4 mb-1.5 uppercase tracking-wider">$1</h5>');
+                html = html.replace(/^## (.*$)/gim, '<h4 class="text-sm font-bold text-slate-900 dark:text-white mt-5 mb-2 border-b border-slate-100 dark:border-slate-850 pb-1">$1</h4>');
+                html = html.replace(/^# (.*$)/gim, '<h3 class="text-base font-black text-pertamina-blue mt-6 mb-2.5">$1</h3>');
+
+                // Bold
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
+
+                // Bullet points
+                html = html.replace(/^\s*-\s+(.*$)/gim, '<li class="ml-4 list-disc my-1">$1</li>');
+
+                // Newlines
+                html = html.replace(/\n/g, '<br>');
+
+                return html;
+            }
         });
     </script>
 @endsection

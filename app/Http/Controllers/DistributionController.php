@@ -8,6 +8,8 @@ use App\Models\Spbu;
 use App\Models\FuelType;
 use App\Models\SuratJalan;
 use Illuminate\Http\Request;
+use App\Services\AiService;
+
 
 class DistributionController extends Controller
 {
@@ -305,10 +307,51 @@ class DistributionController extends Controller
     {
         $spbuId = $request->get('spbu_id');
         $fuelTypeId = $request->get('fuel_type_id');
+        $smaN = (int) $request->get('sma_n', 3);
+        if ($smaN < 2 || $smaN > 5) {
+            $smaN = 3;
+        }
 
         $spbus = Spbu::where('status', 'aktif')->orderBy('name')->get();
         $fuelTypes = FuelType::where('status', 'aktif')->orderBy('name')->get();
 
+        $forecast = $this->getForecastData($spbuId, $fuelTypeId, $smaN);
+
+        $chartData = $forecast['chartData'];
+        $tableData = $forecast['tableData'];
+        $nextPeriodLabel = $forecast['nextPeriodLabel'];
+        $nextSmaForecast = $forecast['nextSmaForecast'];
+        $nextSlrForecast = $forecast['nextSlrForecast'];
+        $smaMape = $forecast['smaMape'];
+        $slrMape = $forecast['slrMape'];
+        $slope = $forecast['slope'];
+        $intercept = $forecast['intercept'];
+
+        $view = auth()->user()->role === 'admin_pusat' ? 'superadmin.forecasting' : 'admin.forecasting';
+
+        return view($view, compact(
+            'spbus',
+            'fuelTypes',
+            'spbuId',
+            'fuelTypeId',
+            'chartData',
+            'tableData',
+            'nextPeriodLabel',
+            'nextSmaForecast',
+            'nextSlrForecast',
+            'smaMape',
+            'slrMape',
+            'slope',
+            'intercept',
+            'smaN'
+        ));
+    }
+
+    /**
+     * Helper to retrieve and calculate forecast values
+     */
+    private function getForecastData($spbuId, $fuelTypeId, $smaN)
+    {
         // Query data riil
         $query = Distribution::where('status', 'selesai');
         if ($spbuId) {
@@ -356,17 +399,25 @@ class DistributionController extends Controller
         $values = array_values($historical);
         $n = count($values);
 
-        // --- 1. SINGLE MOVING AVERAGE (N=3) ---
+        // --- 1. SINGLE MOVING AVERAGE (N=smaN) ---
         $smaForecasts = array_fill(0, $n, null);
         $smaErrors = [];
 
-        for ($i = 3; $i < $n; $i++) {
-            $smaForecasts[$i] = round(($values[$i - 1] + $values[$i - 2] + $values[$i - 3]) / 3);
+        for ($i = $smaN; $i < $n; $i++) {
+            $sum = 0;
+            for ($j = 1; $j <= $smaN; $j++) {
+                $sum += $values[$i - $j];
+            }
+            $smaForecasts[$i] = round($sum / $smaN);
             $actual = $values[$i];
             $smaErrors[] = abs(($actual - $smaForecasts[$i]) / $actual);
         }
 
-        $nextSmaForecast = round(($values[$n - 1] + $values[$n - 2] + $values[$n - 3]) / 3);
+        $sum = 0;
+        for ($j = 1; $j <= $smaN; $j++) {
+            $sum += $values[$n - $j];
+        }
+        $nextSmaForecast = round($sum / $smaN);
         $smaMape = count($smaErrors) > 0 ? (array_sum($smaErrors) / count($smaErrors)) * 100 : 0;
 
         // --- 2. SIMPLE LINEAR REGRESSION ---
@@ -431,23 +482,94 @@ class DistributionController extends Controller
             ];
         }
 
-        $view = auth()->user()->role === 'admin_pusat' ? 'superadmin.forecasting' : 'admin.forecasting';
+        return [
+            'historical' => $historical,
+            'chartData' => $chartData,
+            'tableData' => $tableData,
+            'nextPeriodLabel' => $nextPeriodLabel,
+            'nextSmaForecast' => $nextSmaForecast,
+            'nextSlrForecast' => $nextSlrForecast,
+            'smaMape' => $smaMape,
+            'slrMape' => $slrMape,
+            'slope' => $slope,
+            'intercept' => $intercept,
+            'n' => $n,
+        ];
+    }
 
-        return view($view, compact(
-            'spbus',
-            'fuelTypes',
-            'spbuId',
-            'fuelTypeId',
-            'chartData',
-            'tableData',
-            'nextPeriodLabel',
-            'nextSmaForecast',
-            'nextSlrForecast',
-            'smaMape',
-            'slrMape',
-            'slope',
-            'intercept'
-        ));
+    /**
+     * AJAX endpoint to generate narrative forecasting recommendations via AI (Gemini/OpenRouter)
+     */
+    public function generateAiAnalysis(Request $request, AiService $aiService)
+    {
+        $spbuId = $request->get('spbu_id');
+        $fuelTypeId = $request->get('fuel_type_id');
+        $smaN = (int) $request->get('sma_n', 3);
+        if ($smaN < 2 || $smaN > 5) {
+            $smaN = 3;
+        }
+
+        $forecast = $this->getForecastData($spbuId, $fuelTypeId, $smaN);
+
+        $spbuName = 'Semua SPBU';
+        if ($spbuId) {
+            $spbu = Spbu::find($spbuId);
+            if ($spbu) {
+                $spbuName = $spbu->code . ' - ' . $spbu->name;
+            }
+        }
+
+        $fuelName = 'Semua Varian BBM';
+        if ($fuelTypeId) {
+            $fuel = FuelType::find($fuelTypeId);
+            if ($fuel) {
+                $fuelName = $fuel->name . ' (' . $fuel->code . ')';
+            }
+        }
+
+        $historicalText = '';
+        foreach ($forecast['historical'] as $period => $val) {
+            $monthName = \Carbon\Carbon::parse($period . '-01')->translatedFormat('F Y');
+            $historicalText .= "- {$monthName}: " . number_format($val, 0, ',', '.') . " Liter\n";
+        }
+
+        $bestModel = $forecast['smaMape'] < $forecast['slrMape'] ? 'Single Moving Average (SMA)' : 'Simple Linear Regression (SLR)';
+        $bestMape = $forecast['smaMape'] < $forecast['slrMape'] ? $forecast['smaMape'] : $forecast['slrMape'];
+        $bestVolume = $forecast['smaMape'] < $forecast['slrMape'] ? $forecast['nextSmaForecast'] : $forecast['nextSlrForecast'];
+
+        $prompt = "Anda adalah Asisten Sistem Pendukung Keputusan (SPK) Cerdas untuk distribusi BBM Pertamina.
+Analisis data distribusi BBM berikut dan berikan rekomendasi pengadaan/distribusi:
+
+ENTITAS:
+- Stasiun SPBU: {$spbuName}
+- Jenis BBM: {$fuelName}
+
+DATA HISTORIS (6 BULAN TERAKHIR):
+{$historicalText}
+
+HASIL PREDIKSI UNTUK BULAN DEPAN ({$forecast['nextPeriodLabel']}):
+- Prediksi Model SMA (N={$smaN}): " . number_format($forecast['nextSmaForecast'], 0, ',', '.') . " Liter (MAPE: " . number_format($forecast['smaMape'], 2, ',', '.') . "%)
+- Prediksi Model SLR (Simple Linear Regression): " . number_format($forecast['nextSlrForecast'], 0, ',', '.') . " Liter (MAPE: " . number_format($forecast['slrMape'], 2, ',', '.') . "%)
+
+MODEL REKOMENDASI TERBAIK (Error Terkecil):
+- Model: {$bestModel} (MAPE: " . number_format($bestMape, 2, ',', '.') . "%)
+- Volume Rekomendasi: " . number_format($bestVolume, 0, ',', '.') . " Liter
+
+TUGAS ANDA:
+Berikan analisis singkat, padat, dan taktis dalam Bahasa Indonesia (maksimal 3 paragraf atau format poin-poin yang mudah dibaca) mencakup:
+1. Analisis singkat mengenai tren konsumsi BBM berdasarkan data di atas (apakah naik, turun, atau stabil).
+2. Rekomendasi volume pasokan/stok yang optimal untuk bulan depan berbasis model rekomendasi beserta mitigasi jika terjadi lonjakan/penurunan demand mendadak.
+3. Penjelasan singkat mengapa model rekomendasi terbaik terpilih berdasarkan nilai MAPE-nya.
+Gunakan format markdown yang rapi (bold, list, dst) tanpa pembuka/penutup basa-basi.";
+
+        $analysis = $aiService->generateRecommendation($prompt);
+
+        return response()->json([
+            'success' => true,
+            'analysis' => $analysis,
+            'provider' => config('services.ai_provider', 'gemini'),
+        ]);
     }
 }
+
 

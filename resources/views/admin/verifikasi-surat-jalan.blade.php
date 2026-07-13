@@ -133,19 +133,19 @@
                                         $label = $sj->statusLabel();
                                     @endphp
                                     <span class="px-3 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5
-                                                                            @if($color === 'amber') bg-amber-100 text-amber-800
-                                                                            @elseif($color === 'blue') bg-blue-100 text-blue-800
-                                                                            @elseif($color === 'purple') bg-purple-100 text-purple-800
-                                                                            @elseif($color === 'green') bg-green-100 text-green-800
-                                                                            @else bg-red-100 text-red-800
-                                                                            @endif">
+                                                                                                    @if($color === 'amber') bg-amber-100 text-amber-800
+                                                                                                    @elseif($color === 'blue') bg-blue-100 text-blue-800
+                                                                                                    @elseif($color === 'purple') bg-purple-100 text-purple-800
+                                                                                                    @elseif($color === 'green') bg-green-100 text-green-800
+                                                                                                    @else bg-red-100 text-red-800
+                                                                                                    @endif">
                                         <span class="w-1.5 h-1.5 rounded-full
-                                                                                @if($color === 'amber') bg-amber-500
-                                                                                @elseif($color === 'blue') bg-blue-500
-                                                                                @elseif($color === 'purple') bg-purple-500
-                                                                                @elseif($color === 'green') bg-green-500
-                                                                                @else bg-red-500
-                                                                                @endif"></span>
+                                                                                                        @if($color === 'amber') bg-amber-500
+                                                                                                        @elseif($color === 'blue') bg-blue-500
+                                                                                                        @elseif($color === 'purple') bg-purple-500
+                                                                                                        @elseif($color === 'green') bg-green-500
+                                                                                                        @else bg-red-500
+                                                                                                        @endif"></span>
                                         {{ $label }}
                                     </span>
                                 </td>
@@ -330,7 +330,18 @@
     </div>
 
     {{-- Script support --}}
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- Load QRCode Library with Fallbacks -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
+    <script>
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://unpkg.com/qrcode@1.5.1/build/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script>
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"><\/script>');
+        }
+    </script>
     <script>
         function openVerifyModal(id, driverName, plate, codeSJ) {
             document.getElementById('verifyForm').action = `/admin/surat-jalan/${id}/verify`;
@@ -361,11 +372,17 @@
             const container = document.getElementById('barcodeCanvasContainer');
             container.innerHTML = '';
 
-            QRCode.toCanvas(
+            QRCode.toDataURL(
                 codeSJ,
                 { width: 160, margin: 1, color: { dark: '#005eb8', light: '#ffffff' } },
-                function (err, canvas) {
-                    if (!err) container.appendChild(canvas);
+                function (err, url) {
+                    if (!err) {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'w-40 h-40';
+                        img.alt = 'QR Code';
+                        container.appendChild(img);
+                    }
                 }
             );
 
@@ -381,45 +398,82 @@
         }
 
         function printTicket() {
-            const printContent = document.getElementById('printArea').innerHTML;
-            const originalContent = document.body.innerHTML;
-
-            // Create a temporary style element for print styling
-            const style = document.createElement('style');
-            style.innerHTML = `
-                                @media print {
-                                    body {
-                                        background: white !important;
-                                        color: black !important;
-                                    }
-                                    .no-print {
-                                        display: none !important;
-                                    }
-                                }
-                            `;
-            document.head.appendChild(style);
-
-            const popupWin = window.open('', '_blank', 'width=600,height=600');
-            popupWin.document.open();
-            popupWin.document.write(`
-                                <html>
-                                <head>
-                                    <title>Cetak Tiket Barcode</title>
-                                    <script src="https://cdn.tailwindcss.com"><\/script>
-                                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-                                    <style>
-                                        body { font-family: 'Outfit', sans-serif; }
-                                    </style>
-                                </head>
-                                <body class="flex flex-col items-center justify-center p-8 bg-white" onload="window.print();window.close();">
-                                    <div class="border border-slate-350 p-6 rounded-2xl w-80 text-center flex flex-col items-center">
-                                        \${printContent}
-                                    </div>
-                                </body>
-                                </html>
-                            `);
-            popupWin.document.close();
-            document.head.removeChild(style);
+            window.print();
         }
     </script>
+
+    @push('styles')
+        <style>
+            @media print {
+
+                /* Hide sidebar, layout background, other sections of main, verify modal, and backdrop / actions of barcode modal */
+                aside,
+                main>div> :not(#barcodeModal),
+                .fixed,
+                #verifyModal,
+                #barcodeModal .backdrop-blur-sm,
+                #barcodeModal .fixed,
+                #barcodeModal button,
+                #barcodeModal .border-t {
+                    display: none !important;
+                }
+
+                /* Override main content margins/padding for printing */
+                main {
+                    margin-left: 0 !important;
+                    padding: 0 !important;
+                }
+
+                main>div {
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    max-width: none !important;
+                }
+
+                /* Display the print container */
+                #barcodeModal {
+                    display: block !important;
+                    position: static !important;
+                    background: transparent !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    overflow: visible !important;
+                }
+
+                #barcodeModal>div {
+                    display: block !important;
+                    padding: 0 !important;
+                    min-height: auto !important;
+                }
+
+                #barcodeModal>div>div {
+                    box-shadow: none !important;
+                    border: none !important;
+                    background: transparent !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    max-width: none !important;
+                }
+
+                #printArea {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    width: 80mm !important;
+                    margin: 0 auto !important;
+                    padding: 20px !important;
+                    background: white !important;
+                    color: black !important;
+                }
+
+                /* Force color/background resets to ensure all texts print correctly */
+                #printArea,
+                #printArea * {
+                    color: black !important;
+                    background: white !important;
+                    border-color: black !important;
+                }
+            }
+        </style>
+    @endpush
 @endsection

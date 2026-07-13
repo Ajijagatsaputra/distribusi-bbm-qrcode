@@ -399,7 +399,18 @@
     </div>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- Load QRCode Library with Fallbacks -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
+    <script>
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://unpkg.com/qrcode@1.5.1/build/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script>
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"><\/script>');
+        }
+    </script>
     <script>
         @if($active && $active->status === 'dikirim')
             document.addEventListener('DOMContentLoaded', function() {

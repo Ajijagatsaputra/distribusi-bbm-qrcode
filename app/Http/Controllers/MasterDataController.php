@@ -50,11 +50,15 @@ class MasterDataController extends Controller
 
     public function destroyFuel(FuelType $fuelType)
     {
-        if ($fuelType->distributions()->exists()) {
-            return back()->with('error', 'BBM ini sudah memiliki data distribusi dan tidak dapat dihapus.');
+        try {
+            $fuelType->delete();
+            return back()->with('success', 'Jenis BBM berhasil dihapus.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return back()->with('error', 'Jenis BBM ini tidak dapat dihapus karena masih terhubung dengan data lain (seperti pesanan, surat jalan, atau QR code).');
+            }
+            throw $e;
         }
-        $fuelType->delete();
-        return back()->with('success', 'Jenis BBM berhasil dihapus.');
     }
 
     // ===== VEHICLE TYPES =====
@@ -86,8 +90,15 @@ class MasterDataController extends Controller
 
     public function destroyVehicle(VehicleType $vehicleType)
     {
-        $vehicleType->delete();
-        return back()->with('success', 'Klasifikasi armada berhasil dihapus.');
+        try {
+            $vehicleType->delete();
+            return back()->with('success', 'Klasifikasi armada berhasil dihapus.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return back()->with('error', 'Klasifikasi armada ini tidak dapat dihapus karena masih terhubung dengan data lain.');
+            }
+            throw $e;
+        }
     }
 
     // ===== SPBU =====
@@ -123,10 +134,14 @@ class MasterDataController extends Controller
 
     public function destroySpbu(Spbu $spbu)
     {
-        if ($spbu->distributions()->exists()) {
-            return back()->with('error', 'SPBU ini sudah memiliki data distribusi dan tidak dapat dihapus.');
+        try {
+            $spbu->delete();
+            return back()->with('success', 'SPBU berhasil dihapus.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return back()->with('error', 'SPBU ini tidak dapat dihapus karena masih terhubung dengan data lain (seperti pesanan, surat jalan, QR code, atau akun user).');
+            }
+            throw $e;
         }
-        $spbu->delete();
-        return back()->with('success', 'SPBU berhasil dihapus.');
     }
 }

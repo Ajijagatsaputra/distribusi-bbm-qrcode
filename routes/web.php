@@ -44,6 +44,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth'])->group(fu
 
     // Live Monitoring & Audit Reports
     Route::get('/live-monitoring', [DistributionController::class, 'liveMonitoring'])->name('live-monitoring');
+    Route::get('/live-monitoring/data', [DistributionController::class, 'liveMonitoringData'])->name('live-monitoring.data'); // Polling API
     Route::get('/audit-reports', [DistributionController::class, 'auditReports'])->name('audit-reports');
     Route::get('/forecasting', [DistributionController::class, 'forecasting'])->name('forecasting');
     Route::post('/forecasting/ai-analysis', [DistributionController::class, 'generateAiAnalysis'])->name('forecasting.ai-analysis');

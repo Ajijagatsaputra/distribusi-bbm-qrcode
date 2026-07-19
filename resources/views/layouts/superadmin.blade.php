@@ -78,6 +78,7 @@
             box-shadow: 0 12px 24px -8px rgba(0, 94, 184, 0.2);
         }
     </style>
+    @stack('styles')
 </head>
 
 <body
@@ -107,6 +108,7 @@
         </main>
     </div>
 
+    @stack('scripts')
 </body>
 
 </html>

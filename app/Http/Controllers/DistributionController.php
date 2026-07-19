@@ -173,14 +173,84 @@ class DistributionController extends Controller
             'active_spbu' => Spbu::where('status', 'aktif')->count(),
         ];
 
-        // Volume per BBM type (for chart)
-        $volumeByFuel = Distribution::where('distributions.status', 'selesai')
-            ->join('fuel_types', 'distributions.fuel_type_id', '=', 'fuel_types.id')
-            ->selectRaw('fuel_types.name, SUM(distributions.volume_liter) as total')
-            ->groupBy('fuel_types.name')
-            ->get();
+        // Data SPBU berkoordinat untuk inisialisasi peta Leaflet
+        $spbu = \App\Models\Spbu::where('status', 'aktif')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->map(fn($s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'code' => $s->code,
+                'city' => $s->city,
+                'latitude' => (float) $s->latitude,
+                'longitude' => (float) $s->longitude,
+                'today_vol' => Distribution::where('spbu_id', $s->id)
+                    ->whereDate('distributed_at', today())
+                    ->where('status', 'selesai')
+                    ->sum('volume_liter'),
+                'last_dist' => Distribution::where('spbu_id', $s->id)
+                    ->latest('distributed_at')
+                    ->value('distributed_at')?->diffForHumans() ?? 'Belum ada',
+            ]);
 
-        return view('superadmin.live-monitoring', compact('recentDistributions', 'stats', 'volumeByFuel'));
+        return view('superadmin.live-monitoring', compact('recentDistributions', 'stats', 'spbu'));
+    }
+
+    /** Superadmin: live monitoring polling API (JSON) */
+    public function liveMonitoringData()
+    {
+        // Auto-expire QR codes
+        QrCode::where('status', 'aktif')
+            ->where('valid_until', '<', today())
+            ->update(['status' => 'expired']);
+
+        $stats = [
+            'total_today' => Distribution::whereDate('distributed_at', today())->count(),
+            'total_volume' => Distribution::where('status', 'selesai')->sum('volume_liter'),
+            'active_qr' => QrCode::where('status', 'aktif')->count(),
+            'active_spbu' => \App\Models\Spbu::where('status', 'aktif')->count(),
+        ];
+
+        $recentDistributions = Distribution::with(['operator', 'spbu', 'fuelType'])
+            ->latest('distributed_at')
+            ->take(20)
+            ->get()
+            ->map(fn($d) => [
+                'distribution_code' => $d->distribution_code,
+                'spbu_name' => $d->spbu->name ?? '-',
+                'fuel_name' => $d->fuelType->name ?? '-',
+                'volume_liter' => $d->volume_liter,
+                'status' => $d->status,
+                'distributed_at' => $d->distributed_at?->diffForHumans(),
+            ]);
+
+        $spbus = \App\Models\Spbu::where('status', 'aktif')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->map(fn($s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'code' => $s->code,
+                'city' => $s->city,
+                'latitude' => (float) $s->latitude,
+                'longitude' => (float) $s->longitude,
+                'today_vol' => Distribution::where('spbu_id', $s->id)
+                    ->whereDate('distributed_at', today())
+                    ->where('status', 'selesai')
+                    ->sum('volume_liter'),
+                'last_dist' => Distribution::where('spbu_id', $s->id)
+                    ->latest('distributed_at')
+                    ->value('distributed_at')?->diffForHumans() ?? 'Belum ada',
+            ]);
+
+        return response()->json([
+            'stats' => $stats,
+            'recent_distributions' => $recentDistributions,
+            'spbus' => $spbus,
+            'timestamp' => now()->format('H:i:s'),
+        ]);
     }
 
     /** Superadmin: audit reports */

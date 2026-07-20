@@ -40,10 +40,10 @@
                 <span class="text-sm {{ request()->routeIs('operator.history') ? 'font-semibold' : 'font-medium' }}">History</span>
             </a>
 
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#636f88] dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('operator.profile') ? 'bg-primary/10 text-primary' : 'text-[#636f88] dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }} transition-colors"
+                href="{{ route('operator.profile') }}">
                 <span class="material-symbols-outlined">person</span>
-                <span class="text-sm font-medium">Profile</span>
+                <span class="text-sm {{ request()->routeIs('operator.profile') ? 'font-semibold' : 'font-medium' }}">Profile</span>
             </a>
         </nav>
 

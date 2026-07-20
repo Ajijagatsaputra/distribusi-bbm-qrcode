@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Operator Dashboard')</title>
+    @pwaHead('logo.png', '#005eb8')
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
@@ -57,5 +58,7 @@
     </main>
 </div>
 
+@laravelPWA
+@pwaUpdateNotifier
 </body>
 </html>

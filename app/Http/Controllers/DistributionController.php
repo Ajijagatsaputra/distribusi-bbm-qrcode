@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DistributionCreated;
 use App\Models\Distribution;
 use App\Models\QrCode;
 use App\Models\Spbu;
@@ -35,15 +36,18 @@ class DistributionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'surat_jalan_id' => 'nullable|exists:surat_jalans,id',
+            'surat_jalan_id' => 'required|exists:surat_jalan,id',
             'qr_code_id' => 'nullable|exists:qr_codes,id',
             'spbu_id' => 'required|exists:spbus,id',
             'fuel_type_id' => 'required|exists:fuel_types,id',
-            'vehicle_plate' => 'required|string|max:15',
-            'driver_name' => 'required|string|max:100',
             'volume_liter' => 'required|integer|min:1',
             'notes' => 'nullable|string|max:500',
         ]);
+
+        // Ambil data driver & kendaraan langsung dari Surat Jalan (bukan dari request)
+        $suratJalan = SuratJalan::with('driver')->findOrFail($validated['surat_jalan_id']);
+        $driverName = $suratJalan->driver->name;
+        $vehiclePlate = $suratJalan->vehicle_plate;
 
         // Mark QR as used if provided
         if (!empty($validated['qr_code_id'])) {
@@ -61,20 +65,23 @@ class DistributionController extends Controller
                 ]);
         }
 
-        Distribution::create([
+        $distribution = Distribution::create([
             'distribution_code' => Distribution::generateCode(),
             'qr_code_id' => $validated['qr_code_id'] ?? null,
             'operator_id' => auth()->id(),
             'spbu_id' => $validated['spbu_id'],
             'fuel_type_id' => $validated['fuel_type_id'],
-            'vehicle_plate' => strtoupper($validated['vehicle_plate']),
-            'driver_name' => $validated['driver_name'],
+            'vehicle_plate' => strtoupper($vehiclePlate),
+            'driver_name' => $driverName,
             'volume_liter' => $validated['volume_liter'],
             'status' => 'selesai',
-            'notes' => $validated['notes'] ?? 'Diinput secara manual oleh Admin Depo.',
-            'surat_jalan_id' => $validated['surat_jalan_id'] ?? null,
+            'notes' => $validated['notes'] ?? 'Diinput manual oleh Admin Depo terikat Surat Jalan ' . $suratJalan->kode_surat_jalan,
+            'surat_jalan_id' => $validated['surat_jalan_id'],
             'distributed_at' => now(),
         ]);
+
+        // 🔴 Broadcast real-time via Reverb WebSocket
+        broadcast(new DistributionCreated($distribution));
 
         if (auth()->user()->role === 'admin_depo') {
             return redirect()->route('admin.distribution-data')

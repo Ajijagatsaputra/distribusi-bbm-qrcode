@@ -35,14 +35,14 @@
                 <span class="text-sm">Verifikasi Surat Jalan</span>
             </a>
 
-            <!-- <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->routeIs('admin.input-distribusi*') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
+            <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->routeIs('admin.input-distribusi*') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
                 href="{{ route('admin.input-distribusi') }}">
                 @if(request()->routeIs('admin.input-distribusi*'))
                     <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-pertamina-blue rounded-r-full"></div>
                 @endif
                 <span class="material-symbols-outlined group-hover:scale-110 transition-transform">add_circle</span>
                 <span class="text-sm">Input Distribusi</span>
-            </a> -->
+            </a>
 
             <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative group {{ request()->routeIs('admin.qr-management*') ? 'bg-pertamina-blue/10 text-pertamina-blue font-bold' : 'text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium' }}"
                 href="{{ route('admin.qr-management') }}">

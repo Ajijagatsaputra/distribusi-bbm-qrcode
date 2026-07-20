@@ -6,6 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pertamina - Driver Surat Jalan</title>
+    @pwaHead('logo.png', '#005eb8')
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
@@ -115,6 +116,12 @@
                         <span
                             class="material-symbols-outlined group-hover:scale-110 transition-transform">history</span>
                         <span class="text-sm">Riwayat Pengiriman</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 hover:text-pertamina-blue hover:bg-white/50 dark:hover:bg-slate-800/50 font-medium transition-all group"
+                        href="{{ route('operator.profile') }}">
+                        <span
+                            class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>
+                        <span class="text-sm">Profile Settings</span>
                     </a>
                 </nav>
 
@@ -565,6 +572,41 @@
                 overlay.classList.remove('hidden');
             }
         }
+    </script>
+
+    <!-- Custom PWA Install Banner -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-6 left-6 right-6 lg:left-80 lg:right-10 bg-gradient-to-r from-pertamina-blue to-blue-700 text-white rounded-3xl p-6 shadow-2xl z-40 border border-white/20">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-white/10 rounded-2xl border border-white/20 shrink-0">
+                    <span class="material-symbols-outlined text-3xl text-white">install_mobile</span>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold">Pasang Aplikasi PWA</h4>
+                    <p class="text-xs text-blue-100 font-medium">Instal aplikasi untuk akses cepat tanpa internet & notifikasi langsung.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
+                <button id="pwa-install-btn" class="flex-1 sm:flex-none px-6 py-3 bg-white text-pertamina-blue font-bold text-sm rounded-xl hover:bg-blue-50 transition-all shadow-sm">
+                    Pasang Sekarang
+                </button>
+                <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @laravelPWA
+    @pwaUpdateNotifier
+
+    <script>
+        window.addEventListener('pwa-installable', (e) => {
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) {
+                banner.classList.remove('hidden');
+            }
+        });
     </script>
 </body>
 

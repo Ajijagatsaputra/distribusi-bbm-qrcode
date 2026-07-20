@@ -196,11 +196,11 @@
                 {{-- ACTIVE ASSIGNMENT BANNER / SCANNER --}}
                 @if($active)
                     <div
-                        class="glass-panel p-8 rounded-[2rem] border border-white/50 shadow-glass bg-gradient-to-br from-white/90 to-slate-50/50">
-                        <div class="flex flex-col lg:flex-row justify-between gap-8 items-start">
-                            <div class="space-y-4 max-w-xl">
+                        class="glass-panel p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] border border-white/50 shadow-glass bg-gradient-to-br from-white/90 to-slate-50/50">
+                        <div class="flex flex-col lg:flex-row justify-between gap-6 sm:gap-8 items-start">
+                            <div class="space-y-3 sm:space-y-4 max-w-xl w-full">
                                 <span
-                                    class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 bg-amber-100 text-amber-800 border border-amber-200">
+                                    class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold inline-flex items-center gap-1 bg-amber-100 text-amber-800 border border-amber-200">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                     @if($active->status === 'menunggu')
                                         Menunggu Verifikasi Depo
@@ -212,21 +212,21 @@
                                         Status: {{ ucfirst($active->status) }}
                                     @endif
                                 </span>
-                                <h3 class="text-3xl font-extrabold text-slate-900">Tugas Aktif Hari Ini</h3>
-                                <p class="text-sm font-semibold text-slate-500">Kode Surat Jalan: <span
+                                <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900">Tugas Aktif Hari Ini</h3>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-500">Kode Surat Jalan: <span
                                         class="font-mono text-pertamina-blue font-bold">{{ $active->kode_surat_jalan }}</span>
                                 </p>
 
-                                <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200/50">
+                                <div class="grid grid-cols-2 gap-4 sm:gap-6 pt-4 border-t border-slate-200/50">
                                     <div>
-                                        <p class="text-xs text-slate-400 font-bold uppercase">SPBU Tujuan</p>
-                                        <p class="text-base font-bold text-slate-800">{{ $active->spbu->name }}</p>
-                                        <p class="text-xs text-slate-500">{{ $active->spbu->location }}</p>
+                                        <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">SPBU Tujuan</p>
+                                        <p class="text-sm sm:text-base font-bold text-slate-800">{{ $active->spbu->name }}</p>
+                                        <p class="text-[11px] sm:text-xs text-slate-500">{{ $active->spbu->location }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-xs text-slate-400 font-bold uppercase">Muatan BBM</p>
-                                        <p class="text-base font-bold text-slate-800">{{ $active->fuelType->name }}</p>
-                                        <p class="text-xs text-slate-500">{{ number_format($active->volume_liter) }} Liter
+                                        <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">Muatan BBM</p>
+                                        <p class="text-sm sm:text-base font-bold text-slate-800">{{ $active->fuelType->name }}</p>
+                                        <p class="text-[11px] sm:text-xs text-slate-500">{{ number_format($active->volume_liter) }} Liter
                                         </p>
                                     </div>
                                 </div>
@@ -236,12 +236,12 @@
                             <div class="w-full lg:w-96 flex flex-col gap-4">
                                 @if($active->status === 'dikirim')
                                     {{-- QR CODE UNTUK DISCAN SPBU --}}
-                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-3">
+                                    <div class="glass-panel p-5 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-3">
                                         <div class="text-center space-y-1">
-                                            <h4 class="font-bold text-slate-900">QR Code Surat Jalan</h4>
-                                            <p class="text-[11px] text-slate-500 font-semibold leading-tight">Tunjukkan QR Code ini kepada Admin SPBU untuk dipindai saat tiba di lokasi</p>
+                                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">QR Code Surat Jalan</h4>
+                                            <p class="text-[10px] sm:text-[11px] text-slate-500 font-semibold leading-tight">Tunjukkan QR Code ini kepada Admin SPBU untuk dipindai saat tiba di lokasi</p>
                                         </div>
-                                        <div id="driverSjQRCode" class="flex items-center justify-center p-2.5 bg-white border border-slate-200 size-40 rounded-xl shadow-sm"></div>
+                                        <div id="driverSjQRCode" class="flex items-center justify-center p-2.5 bg-white border border-slate-200 size-36 sm:size-40 rounded-xl shadow-sm"></div>
                                         <span class="font-mono font-bold text-xs text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">{{ $active->kode_surat_jalan }}</span>
                                     </div>
                                     
@@ -249,7 +249,7 @@
                                     <div class="glass-panel p-4 rounded-xl border border-slate-200/50 bg-slate-50/50 flex flex-col items-center justify-center space-y-2">
                                         <p class="text-[10px] text-slate-500 font-bold uppercase">Alternatif Verifikasi</p>
                                         <button onclick="startScanner('{{ $active->id }}')"
-                                            class="w-full py-2 bg-pertamina-blue/10 hover:bg-pertamina-blue/20 text-pertamina-blue text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5">
+                                            class="w-full py-2.5 bg-pertamina-blue/10 hover:bg-pertamina-blue/20 text-pertamina-blue text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5">
                                             <span class="material-symbols-outlined text-[16px]">photo_camera</span>
                                             <span>Scan QR SPBU</span>
                                         </button>
@@ -259,18 +259,18 @@
                                         </button>
                                     </div>
                                 @elseif($active->status === 'terverifikasi')
-                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
-                                        <div class="text-center p-4 space-y-2">
-                                            <span class="material-symbols-outlined text-amber-500 text-4xl animate-pulse">local_shipping</span>
-                                            <h4 class="font-bold text-slate-900">Menunggu Lepas Kirim</h4>
+                                    <div class="glass-panel p-5 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
+                                        <div class="text-center p-2 sm:p-4 space-y-2">
+                                            <span class="material-symbols-outlined text-amber-500 text-3xl sm:text-4xl animate-pulse">local_shipping</span>
+                                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">Menunggu Lepas Kirim</h4>
                                             <p class="text-xs text-slate-500 leading-normal">Silakan hubungi Admin Depo untuk menandai keberangkatan Anda ke jalan.</p>
                                         </div>
                                     </div>
                                 @else
-                                    <div class="glass-panel p-6 rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
-                                        <div class="text-center p-4 space-y-2">
-                                            <span class="material-symbols-outlined text-amber-500 text-4xl">hourglass_empty</span>
-                                            <h4 class="font-bold text-slate-900">Menunggu Verifikasi Depo</h4>
+                                    <div class="glass-panel p-5 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200/50 bg-white flex flex-col items-center justify-center space-y-4">
+                                        <div class="text-center p-2 sm:p-4 space-y-2">
+                                            <span class="material-symbols-outlined text-amber-500 text-3xl sm:text-4xl">hourglass_empty</span>
+                                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">Menunggu Verifikasi Depo</h4>
                                             <p class="text-xs text-slate-500 leading-normal">Tunjukkan Surat Jalan fisik kepada petugas Depo untuk diverifikasi.</p>
                                         </div>
                                     </div>
@@ -279,41 +279,36 @@
                         </div>
                     </div>
                 @else
-                    <div class="glass-panel p-6 rounded-2xl border border-white/50 text-center py-10 space-y-2">
-                        <span class="material-symbols-outlined text-slate-300 text-5xl">task_alt</span>
-                        <h3 class="text-lg font-bold text-slate-950">Semua Penugasan Selesai</h3>
-                        <p class="text-sm text-slate-500">Tidak ada surat jalan aktif yang ditugaskan kepada Anda saat ini.
+                    <div class="glass-panel p-5 sm:p-6 rounded-xl sm:rounded-2xl border border-white/50 text-center py-8 sm:py-10 space-y-2">
+                        <span class="material-symbols-outlined text-slate-300 text-4xl sm:text-5xl">task_alt</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-950">Semua Penugasan Selesai</h3>
+                        <p class="text-xs sm:text-sm text-slate-500">Tidak ada surat jalan aktif yang ditugaskan kepada Anda saat ini.
                         </p>
                     </div>
                 @endif
 
                 {{-- HISTORY TABEL --}}
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-glass border border-white/40">
-                    <div class="p-6 border-b border-slate-200/50 bg-white/40">
-                        <h3 class="text-xl font-bold text-slate-900">Riwayat Penugasan Surat Jalan</h3>
+                <div class="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden shadow-glass border border-white/40">
+                    <div class="p-4 sm:p-6 border-b border-slate-200/50 bg-white/40 dark:bg-slate-800/40">
+                        <h3 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white">Riwayat Penugasan Surat Jalan</h3>
                     </div>
-                    <div class="overflow-x-auto">
+                    
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50/50">
-                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Kode
-                                        SJ</th>
-                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Tanggal</th>
-                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">SPBU
-                                        Tujuan</th>
-                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">BBM
-                                        & Volume</th>
-                                    <th
-                                        class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider text-center">
-                                        Status</th>
+                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Kode SJ</th>
+                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">SPBU Tujuan</th>
+                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">BBM & Volume</th>
+                                    <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200/50 bg-white/10">
                                 @forelse($suratJalans as $sj)
                                     <tr class="hover:bg-white/60 transition-colors">
-                                        <td class="px-6 py-4 font-mono font-bold text-slate-900">{{ $sj->kode_surat_jalan }}
-                                        </td>
+                                        <td class="px-6 py-4 font-mono font-bold text-slate-900">{{ $sj->kode_surat_jalan }}</td>
                                         <td class="px-6 py-4 text-sm text-slate-600">
                                             {{ \Carbon\Carbon::parse($sj->tanggal_kirim)->format('d M Y') }}
                                         </td>
@@ -323,8 +318,7 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="font-semibold text-slate-850">{{ $sj->fuelType->name }}</div>
-                                            <div class="text-xs text-slate-500">{{ number_format($sj->volume_liter) }} Liter
-                                            </div>
+                                            <div class="text-xs text-slate-500">{{ number_format($sj->volume_liter) }} Liter</div>
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             @php
@@ -351,12 +345,62 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-12 text-slate-400 font-medium">Belum ada
-                                            riwayat surat jalan.</td>
+                                        <td colspan="5" class="text-center py-12 text-slate-400 font-medium">Belum ada riwayat surat jalan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile List (hidden on desktop) -->
+                    <div class="block md:hidden divide-y divide-slate-100/70 dark:divide-slate-800/70">
+                        @forelse($suratJalans as $sj)
+                            @php
+                                $color = $sj->statusColor();
+                                $label = $sj->statusLabel();
+                            @endphp
+                            <div class="p-4 flex flex-col gap-3 hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-mono font-bold text-xs text-pertamina-blue bg-pertamina-blue/5 px-2.5 py-0.5 rounded-lg border border-pertamina-blue/10">{{ $sj->kode_surat_jalan }}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1
+                                        @if($color === 'amber') bg-amber-100 text-amber-800
+                                        @elseif($color === 'blue') bg-blue-100 text-blue-800
+                                        @elseif($color === 'purple') bg-purple-100 text-purple-800
+                                        @elseif($color === 'green') bg-green-100 text-green-800
+                                        @else bg-red-100 text-red-800
+                                        @endif">
+                                        <span class="w-1 h-1 rounded-full
+                                            @if($color === 'amber') bg-amber-500
+                                            @elseif($color === 'blue') bg-blue-500
+                                            @elseif($color === 'purple') bg-purple-500
+                                            @elseif($color === 'green') bg-green-500
+                                            @else bg-red-500
+                                            @endif animate-pulse"></span>
+                                        {{ $label }}
+                                    </span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">Tujuan</p>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">{{ $sj->spbu->name }}</p>
+                                        <p class="text-[10px] text-slate-500 truncate">{{ $sj->spbu->location }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">Muatan</p>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">{{ $sj->fuelType->name }}</p>
+                                        <p class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ number_format($sj->volume_liter) }} L</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pt-2 border-t border-slate-100/50 dark:border-slate-800/50 text-[10px] text-slate-400">
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[12px]">calendar_month</span>
+                                        {{ \Carbon\Carbon::parse($sj->tanggal_kirim)->translatedFormat('d M Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-8 text-slate-400 font-medium text-xs">Belum ada riwayat surat jalan.</div>
+                        @endforelse
                     </div>
                 </div>
             </div>

@@ -194,15 +194,16 @@
                 </div>
 
                 {{-- PROFILE FORM --}}
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-glass border border-white/40">
+                <div class="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden shadow-glass border border-white/40">
                     <form id="profileForm" onsubmit="handleProfileSubmit(event)" class="divide-y divide-slate-200/50">
-                        <div class="p-6 sm:p-8 space-y-8">
+                        <div class="p-5 sm:p-8 space-y-6 sm:space-y-8">
                             <div class="flex items-center gap-3">
                                 <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-pertamina-blue/10">
                                     <span
                                         class="text-xl material-symbols-outlined text-pertamina-blue">person_outline</span>
                                 </div>
-                                <h4 class="text-lg font-bold text-slate-900 dark:text-white">Informasi Personal</h4>
+                                <h4 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Informasi
+                                    Personal</h4>
                             </div>
 
                             <div class="flex flex-col sm:flex-row items-center gap-6 pb-4">
@@ -218,7 +219,8 @@
                                 </div>
                                 <div class="text-center sm:text-left space-y-1">
                                     <h5 class="text-base font-bold text-slate-900 dark:text-white">
-                                        {{ auth()->user()->name }}</h5>
+                                        {{ auth()->user()->name }}
+                                    </h5>
                                     <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Driver
                                         Pengiriman BBM</p>
                                     <span
@@ -229,30 +231,35 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nama
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Nama
                                         Lengkap</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all"
                                         type="text" value="{{ auth()->user()->name }}" required />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Email
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Email
                                         Address</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all"
                                         type="email" value="{{ auth()->user()->email }}" required />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">ID Pengemudi
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">ID
+                                        Pengemudi
                                         (NIP)</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm font-mono rounded-xl bg-slate-100/50 border border-slate-200 text-slate-500 cursor-not-allowed"
                                         readonly type="text" value="DRV-00{{ auth()->user()->id }}-BBM" />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Peran
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Peran
                                         Sistem</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl bg-slate-100/50 border border-slate-200 text-slate-500 cursor-not-allowed"
@@ -261,31 +268,35 @@
                             </div>
                         </div>
 
-                        <div class="p-6 sm:p-8 space-y-8">
+                        <div class="p-5 sm:p-8 space-y-6 sm:space-y-8">
                             <div class="flex items-center gap-3">
                                 <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-500/10">
                                     <span class="text-xl material-symbols-outlined text-orange-500">lock_reset</span>
                                 </div>
-                                <h4 class="text-lg font-bold text-slate-900 dark:text-white">Ubah Password</h4>
+                                <h4 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Ubah Password
+                                </h4>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Password
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Password
                                         Sekarang</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all"
                                         placeholder="••••••••" type="password" />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Password
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Password
                                         Baru</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all"
                                         placeholder="••••••••" type="password" />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Konfirmasi
+                                    <label
+                                        class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Konfirmasi
                                         Password Baru</label>
                                     <input
                                         class="w-full h-12 px-4 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-pertamina-blue/20 focus:border-pertamina-blue transition-all"
@@ -294,12 +305,13 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end gap-3 p-6 sm:p-8 bg-slate-50/50 dark:bg-slate-800/30">
+                        <div
+                            class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 p-5 sm:p-8 bg-slate-50/50 dark:bg-slate-800/30">
                             <button
-                                class="px-6 py-3 text-sm font-bold bg-white border border-slate-200 shadow-sm rounded-xl text-slate-700 hover:bg-slate-50 transition-all"
+                                class="px-6 py-3 text-sm font-bold bg-white border border-slate-200 shadow-sm rounded-xl text-slate-700 hover:bg-slate-50 transition-all text-center"
                                 type="button" onclick="window.location.reload()">Reset</button>
                             <button
-                                class="px-8 py-3 text-sm font-bold text-white shadow-lg rounded-xl bg-gradient-to-r from-pertamina-blue to-blue-600 hover:to-blue-500 shadow-glow-blue transition-all"
+                                class="px-8 py-3 text-sm font-bold text-white shadow-lg rounded-xl bg-gradient-to-r from-pertamina-blue to-blue-600 hover:to-blue-500 shadow-glow-blue transition-all text-center"
                                 type="submit">Simpan Perubahan</button>
                         </div>
                     </form>

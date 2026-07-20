@@ -169,96 +169,96 @@
                 </header>
 
                 <!-- Status Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
                     <!-- Card 1 -->
-                    <div class="glass-panel rounded-3xl p-6 hover-lift relative overflow-hidden group">
+                    <div class="glass-panel rounded-2xl sm:rounded-3xl p-5 sm:p-6 hover-lift relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 size-24 bg-pertamina-blue/5 rounded-full blur-xl group-hover:bg-pertamina-blue/10 transition-colors"></div>
-                        <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div class="flex justify-between items-start mb-4 sm:mb-6 relative z-10">
                             <div>
-                                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Pengiriman</p>
-                                <p class="text-4xl font-extrabold text-slate-900 dark:text-white">{{ $totalShipments }}</p>
+                                <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-wider mb-1">Total Pengiriman</p>
+                                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">{{ $totalShipments }}</p>
                             </div>
-                            <div class="size-12 rounded-2xl bg-pertamina-blue/10 flex items-center justify-center text-pertamina-blue">
-                                <span class="material-symbols-outlined">receipt_long</span>
+                            <div class="size-10 sm:size-12 rounded-xl sm:rounded-2xl bg-pertamina-blue/10 flex items-center justify-center text-pertamina-blue">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">receipt_long</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 relative z-10">
-                            <span class="text-xs text-slate-500 font-medium">Total seluruh bongkar BBM selesai</span>
+                            <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Total seluruh bongkar BBM selesai</span>
                         </div>
                     </div>
 
                     <!-- Card 2 -->
-                    <div class="glass-panel rounded-3xl p-6 hover-lift relative overflow-hidden group">
+                    <div class="glass-panel rounded-2xl sm:rounded-3xl p-5 sm:p-6 hover-lift relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 size-24 bg-pertamina-red/5 rounded-full blur-xl group-hover:bg-pertamina-red/10 transition-colors"></div>
-                        <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div class="flex justify-between items-start mb-4 sm:mb-6 relative z-10">
                             <div>
-                                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Volume Bongkar</p>
+                                <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-wider mb-1">Total Volume Bongkar</p>
                                 <div class="flex items-baseline gap-1">
-                                    <p class="text-4xl font-extrabold text-slate-900 dark:text-white">{{ number_format($totalVolume, 0, ',', '.') }}</p>
-                                    <span class="text-slate-500 font-semibold">Liter</span>
+                                    <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">{{ number_format($totalVolume, 0, ',', '.') }}</p>
+                                    <span class="text-slate-500 text-xs sm:text-sm font-semibold">Liter</span>
                                 </div>
                             </div>
-                            <div class="size-12 rounded-2xl bg-pertamina-red/10 flex items-center justify-center text-pertamina-red">
-                                <span class="material-symbols-outlined">water_drop</span>
+                            <div class="size-10 sm:size-12 rounded-xl sm:rounded-2xl bg-pertamina-red/10 flex items-center justify-center text-pertamina-red">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">water_drop</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 relative z-10">
-                            <span class="text-xs text-slate-500 font-medium">Akumulasi volume BBM terkirim</span>
+                            <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Akumulasi volume BBM terkirim</span>
                         </div>
                     </div>
 
                     <!-- Card 3 -->
-                    <div class="glass-panel rounded-3xl p-6 hover-lift relative overflow-hidden group">
+                    <div class="glass-panel rounded-2xl sm:rounded-3xl p-5 sm:p-6 hover-lift relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 size-24 bg-pertamina-green/5 rounded-full blur-xl group-hover:bg-pertamina-green/10 transition-colors"></div>
-                        <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div class="flex justify-between items-start mb-4 sm:mb-6 relative z-10">
                             <div>
-                                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Tugas Aktif</p>
+                                <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-wider mb-1">Tugas Aktif</p>
                                 @if($activeSuratJalan)
-                                    <p class="text-xl font-extrabold text-pertamina-blue truncate">{{ $activeSuratJalan->kode_surat_jalan }}</p>
+                                    <p class="text-lg sm:text-xl font-extrabold text-pertamina-blue truncate max-w-[150px] sm:max-w-none">{{ $activeSuratJalan->kode_surat_jalan }}</p>
                                 @else
-                                    <p class="text-xl font-extrabold text-slate-400">Tidak Ada Tugas</p>
+                                    <p class="text-lg sm:text-xl font-extrabold text-slate-400">Tidak Ada Tugas</p>
                                 @endif
                             </div>
-                            <div class="size-12 rounded-2xl bg-pertamina-green/10 flex items-center justify-center text-pertamina-green">
-                                <span class="material-symbols-outlined">description</span>
+                            <div class="size-10 sm:size-12 rounded-xl sm:rounded-2xl bg-pertamina-green/10 flex items-center justify-center text-pertamina-green">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">description</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 relative z-10">
                             @if($activeSuratJalan)
-                                <span class="relative flex size-3">
+                                <span class="relative flex size-2.5">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full size-3 bg-amber-500"></span>
+                                    <span class="relative inline-flex rounded-full size-2.5 bg-amber-500"></span>
                                 </span>
-                                <span class="text-xs text-slate-500 font-medium">Status: {{ ucfirst($activeSuratJalan->status) }}</span>
+                                <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Status: {{ ucfirst($activeSuratJalan->status) }}</span>
                             @else
-                                <span class="text-xs text-slate-500 font-medium">Semua tugas terselesaikan</span>
+                                <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Semua tugas terselesaikan</span>
                             @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Call to Action Banner -->
-                <div class="mb-12">
-                    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl p-1">
+                <div class="mb-8 sm:mb-12">
+                    <div class="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl p-0.5 sm:p-1">
                         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                         <!-- Glow effect -->
                         <div class="absolute -right-20 -bottom-20 size-64 bg-pertamina-red rounded-full blur-[80px] opacity-40 mix-blend-screen pointer-events-none"></div>
                         <div class="absolute -left-20 -top-20 size-64 bg-pertamina-blue rounded-full blur-[80px] opacity-40 mix-blend-screen pointer-events-none"></div>
                         
-                        <div class="relative bg-slate-900/40 backdrop-blur-xl rounded-[1.8rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10">
-                            <div class="flex flex-col gap-4 max-w-xl">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-widest w-fit border border-white/20">
-                                    <span class="size-2 rounded-full bg-pertamina-blue animate-pulse"></span>
+                        <div class="relative bg-slate-900/40 backdrop-blur-xl rounded-[0.9rem] sm:rounded-[1.8rem] p-5 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 border border-white/10">
+                            <div class="flex flex-col gap-3 sm:gap-4 max-w-xl">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest w-fit border border-white/20">
+                                    <span class="size-1.5 rounded-full bg-pertamina-blue animate-pulse"></span>
                                     Menu Utama
                                 </span>
-                                <h3 class="text-3xl font-bold text-white leading-tight">Kelola Surat Jalan & <span class="text-pertamina-blue">Scan QR Bongkar</span></h3>
-                                <p class="text-slate-400 text-base leading-relaxed">
+                                <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">Kelola Surat Jalan & <span class="text-pertamina-blue">Scan QR Bongkar</span></h3>
+                                <p class="text-slate-400 text-xs sm:text-sm md:text-base leading-relaxed">
                                     Lihat rincian rute pengiriman, volume tangki, dan gunakan kamera handphone Anda untuk scan QR Code di SPBU sebagai tanda bukti pembongkaran BBM selesai.
                                 </p>
                             </div>
-                            <a href="{{ route('operator.surat-jalan') }}" class="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-pertamina-blue text-white font-bold text-lg overflow-hidden shrink-0 hover:scale-105 transition-all shadow-glow-blue hover:shadow-none">
+                            <a href="{{ route('operator.surat-jalan') }}" class="group relative flex items-center justify-center gap-2 sm:gap-3 w-full md:w-auto px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl bg-pertamina-blue text-white font-bold text-base sm:text-lg overflow-hidden shrink-0 hover:scale-105 transition-all shadow-glow-blue hover:shadow-none">
                                 <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-                                <span class="material-symbols-outlined relative z-10 text-3xl group-hover:rotate-12 transition-transform">qr_code_scanner</span>
+                                <span class="material-symbols-outlined relative z-10 text-2xl sm:text-3xl group-hover:rotate-12 transition-transform">qr_code_scanner</span>
                                 <span class="relative z-10">Buka Surat Jalan</span>
                             </a>
                         </div>
@@ -266,19 +266,19 @@
                 </div>
 
                 <!-- Recent Logs Table -->
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-glass border border-white/40">
-                    <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-4 bg-white/40 dark:bg-slate-800/40">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-white rounded-lg shadow-sm">
-                                <span class="material-symbols-outlined text-pertamina-blue">history</span>
+                <div class="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden shadow-glass border border-white/40">
+                    <div class="p-4 sm:p-6 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between gap-4 bg-white/40 dark:bg-slate-800/40">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-1.5 sm:p-2 bg-white dark:bg-slate-750 rounded-lg shadow-sm">
+                                <span class="material-symbols-outlined text-pertamina-blue text-lg sm:text-xl">history</span>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Riwayat Distribusi Terakhir</h3>
+                            <h3 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white">Riwayat Distribusi Terakhir</h3>
                         </div>
-                        <a href="{{ route('operator.history') }}" class="text-sm font-bold text-pertamina-blue hover:text-blue-700 flex items-center gap-1 hover:gap-2 transition-all">
-                            Lihat Semua <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        <a href="{{ route('operator.history') }}" class="text-xs sm:text-sm font-bold text-pertamina-blue hover:text-blue-700 flex items-center gap-1 hover:gap-2 transition-all">
+                            Lihat Semua <span class="material-symbols-outlined text-[16px] sm:text-[18px]">arrow_forward</span>
                         </a>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50/50 dark:bg-slate-800/30">
@@ -328,6 +328,34 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile List (hidden on desktop) -->
+                    <div class="block md:hidden divide-y divide-slate-100/70 dark:divide-slate-800/70">
+                        @forelse($recentDistributions as $dist)
+                            <div class="p-4 flex items-center justify-between hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="size-10 rounded-xl bg-pertamina-blue/10 flex items-center justify-center text-pertamina-blue shrink-0">
+                                        <span class="material-symbols-outlined text-lg">local_shipping</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-sm font-bold text-slate-900 dark:text-white tracking-wide">{{ $dist->vehicle_plate }}</span>
+                                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $dist->fuelType->code }}</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">{{ $dist->distributed_at->translatedFormat('d M Y, H:i') }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <p class="text-sm font-extrabold text-slate-900 dark:text-white">{{ number_format($dist->volume_liter, 0, ',', '.') }} L</p>
+                                    <span class="inline-flex items-center text-[10px] font-bold text-pertamina-green mt-0.5">
+                                        <span class="material-symbols-outlined text-[12px] mr-0.5">check_circle</span> Selesai
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-8 text-slate-400 font-medium text-xs">Belum ada riwayat distribusi.</div>
+                        @endforelse
                     </div>
                 </div>
 

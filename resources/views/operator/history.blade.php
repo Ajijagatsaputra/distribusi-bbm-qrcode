@@ -216,30 +216,26 @@
                 </form>
 
                 <!-- Table -->
-                <div class="glass-panel rounded-3xl shadow-glass overflow-hidden border border-white/50">
-                    <div class="overflow-x-auto">
+                <div class="glass-panel rounded-2xl sm:rounded-3xl shadow-glass overflow-hidden border border-white/50">
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50/80">
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Kode
                                         Distribusi</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Tanggal
-                                        &amp; Waktu</th>
+                                        Tanggal &amp; Waktu</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">No.
                                         Polisi</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Produk
-                                        BBM</th>
+                                        Produk BBM</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Volume
-                                        (L)</th>
+                                        Volume (L)</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Tujuan
-                                        SPBU</th>
+                                        Tujuan SPBU</th>
                                     <th class="px-6 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        Status
-                                    </th>
+                                        Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200/50 bg-white/40">
@@ -251,12 +247,9 @@
                                         </td>
                                         <td class="px-6 py-5">
                                             <p class="text-sm font-bold text-slate-900">
-                                                {{ $dist->distributed_at?->format('d M Y') }}
-                                            </p>
+                                                {{ $dist->distributed_at?->format('d M Y') }}</p>
                                             <p class="text-xs text-slate-500 mt-0.5">
-                                                {{ $dist->distributed_at?->format('H:i') }}
-                                                WIB
-                                            </p>
+                                                {{ $dist->distributed_at?->format('H:i') }} WIB</p>
                                         </td>
                                         <td class="px-6 py-5">
                                             <div
@@ -267,8 +260,7 @@
                                         </td>
                                         <td class="px-6 py-5 font-semibold text-slate-700">{{ $dist->fuelType->name }}</td>
                                         <td class="px-6 py-5 font-extrabold text-slate-900">
-                                            {{ number_format($dist->volume_liter, 0, ',', '.') }}
-                                        </td>
+                                            {{ number_format($dist->volume_liter, 0, ',', '.') }}</td>
                                         <td class="px-6 py-5 font-medium text-slate-600 text-sm">{{ $dist->spbu->name }}
                                         </td>
                                         <td class="px-6 py-5">
@@ -302,6 +294,64 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile List (hidden on desktop) -->
+                    <div
+                        class="block md:hidden divide-y divide-slate-100/70 dark:divide-slate-800/70 bg-white/10 dark:bg-slate-900/10">
+                        @forelse ($distributions as $dist)
+                            <div
+                                class="p-4 flex flex-col gap-3 hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <span
+                                        class="font-mono font-bold text-xs text-pertamina-blue bg-pertamina-blue/5 px-2.5 py-0.5 rounded-lg border border-pertamina-blue/10">{{ $dist->distribution_code }}</span>
+                                    @if($dist->status === 'selesai')
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-pertamina-green/10 text-pertamina-green text-[10px] font-bold border border-pertamina-green/20">
+                                            <span class="material-symbols-outlined text-[12px] mr-0.5">check_circle</span>
+                                            Selesai
+                                        </span>
+                                    @elseif($dist->status === 'pending')
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold border border-amber-500/20">
+                                            <span class="material-symbols-outlined text-[12px] mr-0.5">sync</span> Pending
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-pertamina-red/10 text-pertamina-red text-[10px] font-bold border border-pertamina-red/20">
+                                            <span class="material-symbols-outlined text-[12px] mr-0.5">error</span> Gagal
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">No. Polisi & SPBU</p>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+                                            {{ $dist->vehicle_plate }}</p>
+                                        <p class="text-[10px] text-slate-500 truncate mt-0.5">{{ $dist->spbu->name }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">Muatan BBM</p>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+                                            {{ $dist->fuelType->name }}</p>
+                                        <p class="text-[10px] text-slate-500 font-extrabold mt-0.5">
+                                            {{ number_format($dist->volume_liter, 0, ',', '.') }} L</p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="flex items-center justify-between pt-2 border-t border-slate-100/50 dark:border-slate-800/50 text-[10px] text-slate-400">
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[12px]">calendar_month</span>
+                                        {{ $dist->distributed_at?->translatedFormat('d M Y, H:i') }} WIB
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-8 text-slate-400 font-medium text-xs">Belum ada riwayat distribusi.
+                            </div>
+                        @endforelse
                     </div>
 
                     <!-- Pagination -->

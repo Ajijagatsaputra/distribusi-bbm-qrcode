@@ -12,6 +12,22 @@
         'status'            => $d->status,
         'distributed_at'    => $d->distributed_at?->diffForHumans(),
     ])->values()->all();
+
+    // Precompute data simulasi tracking driver dari distribusi + koordinat SPBU
+    $simulationData = $recentDistributions->map(function($d) use ($spbu) {
+        $sp = $spbu->firstWhere('id', $d->spbu_id);
+        if (!$sp) return null;
+        return [
+            'code'          => $d->distribution_code,
+            'driver_name'   => $d->driver_name,
+            'vehicle_plate' => $d->vehicle_plate,
+            'spbu_name'     => $sp['name'],
+            'fuel_name'     => $d->fuelType->name ?? '-',
+            'volume'        => $d->volume_liter,
+            'dest_lat'      => $sp['latitude'],
+            'dest_lng'      => $sp['longitude'],
+        ];
+    })->filter()->values()->all();
 @endphp
 
 @push('styles')
@@ -27,6 +43,9 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     .pulse-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+    .truck-pulse { animation: truckPulse 1.5s ease-in-out infinite; }
+    @keyframes truckPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.1); } }
+    .sim-progress-bar { transition: width 0.15s linear; }
 </style>
 @endpush
 
@@ -102,6 +121,9 @@
                     <span class="flex items-center gap-1 text-[10px] font-bold uppercase text-slate-500">
                         <span class="size-2.5 bg-emerald-500 rounded-full inline-block"></span> Ada distribusi hari ini
                     </span>
+                    <span class="flex items-center gap-1 text-[10px] font-bold uppercase text-slate-500">
+                        <span class="size-2.5 bg-red-500 rounded-full inline-block"></span> Driver Aktif
+                    </span>
                 </div>
             </div>
             <div id="monitoring-map"></div>
@@ -150,6 +172,65 @@
         </div>
     </div>
 
+    {{-- SIMULATION PANEL: Tracking Driver Demo --}}
+    <div class="mt-6 bg-white border shadow-glass backdrop-blur-md rounded-2xl border-slate-200/50 dark:bg-slate-900/70 dark:border-slate-800 overflow-hidden">
+        <div class="p-4 border-b border-slate-200/50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 flex items-center justify-between">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">
+                <span class="material-symbols-outlined text-[18px] mr-1 align-bottom text-red-500">local_shipping</span>
+                Simulasi Tracking Driver
+            </h4>
+            <span class="text-[10px] px-2.5 py-1 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 font-bold rounded-full uppercase tracking-wider">Mode Demo</span>
+        </div>
+        <div class="p-5">
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Simulasikan perjalanan driver dari Terminal BBM Ujung Berung menuju SPBU tujuan berdasarkan data distribusi yang sudah tercatat.</p>
+            <div class="flex flex-col md:flex-row items-start md:items-end gap-4">
+                <div class="flex-1 w-full">
+                    <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Pilih Data Pengiriman</label>
+                    <select id="sim-select" class="w-full text-sm border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-red-500/30 focus:border-red-500 outline-none transition">
+                        <option value="">— Pilih distribusi untuk disimulasikan —</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 shrink-0">
+                    <button id="sim-start" onclick="startSimulation()" class="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                        <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                        Mulai Simulasi
+                    </button>
+                    <button id="sim-stop" onclick="stopSimulation()" class="hidden flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-slate-600 to-slate-500 hover:from-slate-700 hover:to-slate-600 rounded-lg shadow-md transition-all duration-200">
+                        <span class="material-symbols-outlined text-[18px]">stop</span>
+                        Hentikan
+                    </button>
+                </div>
+            </div>
+
+            {{-- Progress Panel --}}
+            <div id="sim-info" class="hidden mt-5 p-4 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200/70 dark:border-red-800/40 rounded-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-11 h-11 text-xl bg-white dark:bg-slate-800 rounded-full shadow-sm border border-red-100 dark:border-red-800/50">🚛</div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800 dark:text-white" id="sim-driver-name">-</p>
+                            <p class="text-[11px] text-slate-500" id="sim-vehicle-info">-</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Tujuan</p>
+                        <p class="text-sm font-bold text-pertamina-blue" id="sim-destination">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 h-2.5 bg-white dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
+                        <div id="sim-progress-bar" class="h-full bg-gradient-to-r from-red-500 to-orange-400 rounded-full sim-progress-bar" style="width: 0%"></div>
+                    </div>
+                    <span id="sim-percent" class="text-xs font-black text-red-600 dark:text-red-400 min-w-[42px] text-right">0%</span>
+                </div>
+                <div class="flex justify-between mt-2">
+                    <span class="text-[10px] text-slate-400 font-semibold">📍 Terminal BBM Ujung Berung</span>
+                    <span class="text-[10px] text-slate-400 font-semibold" id="sim-dest-label">🏁 SPBU Tujuan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -161,6 +242,15 @@
 const initialSpbus = @json($spbu ?? []);
 const POLLING_URL  = "{{ route('superadmin.live-monitoring.data') }}";
 let feedItems      = @json($feedItemsData);
+
+// ─── SIMULATION STATE ─────────────────────────────────────────────────────────
+const DEPO = { lat: -6.917415, lng: 107.697412, name: 'Terminal BBM Ujung Berung' };
+const simData = @json($simulationData);
+let simInterval = null;
+let truckMarker = null;
+let routeLine = null;
+let traveledLine = null;
+let depoMarker = null;
 
 // ─── MAP ──────────────────────────────────────────────────────────────────────
 let map = null, markerGroup = null;
@@ -313,6 +403,165 @@ function initWebSocket() {
     conn.bind('disconnected', function() { setWsStatus(false); });
 }
 
+// ─── SIMULATION: TRACKING DRIVER ──────────────────────────────────────────────
+
+function initSimDropdown() {
+    var sel = document.getElementById('sim-select');
+    simData.forEach(function(d, i) {
+        var opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = d.code + '  \u00B7  ' + d.driver_name + ' (' + d.vehicle_plate + ')  \u2192  ' + d.spbu_name;
+        sel.appendChild(opt);
+    });
+}
+
+function buildTruckIcon() {
+    var html = '<div style="position:relative;">'
+        + '<div class="truck-pulse" style="width:42px;height:42px;background:linear-gradient(135deg,#dc2626,#991b1b);border-radius:50%;border:3px solid white;box-shadow:0 4px 15px rgba(220,38,38,0.5);display:flex;align-items:center;justify-content:center;font-size:20px;">'
+        + '\uD83D\uDE9B</div>'
+        + '<div style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #991b1b;"></div>'
+        + '</div>';
+    return L.divIcon({ html: html, className: '', iconSize: [42, 50], iconAnchor: [21, 50], popupAnchor: [0, -52] });
+}
+
+function buildDepoIcon() {
+    var html = '<div style="position:relative;">'
+        + '<div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#5b21b6);border-radius:50%;border:3px solid white;box-shadow:0 3px 12px rgba(124,58,237,0.4);display:flex;align-items:center;justify-content:center;font-size:16px;">'
+        + '\uD83C\uDFED</div>'
+        + '<div style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #5b21b6;"></div>'
+        + '</div>';
+    return L.divIcon({ html: html, className: '', iconSize: [36, 44], iconAnchor: [18, 44], popupAnchor: [0, -46] });
+}
+
+function startSimulation() {
+    var sel = document.getElementById('sim-select');
+    var idx = parseInt(sel.value);
+    if (isNaN(idx) || !simData[idx]) { alert('Pilih data pengiriman terlebih dahulu.'); return; }
+    stopSimulation();
+
+    var data = simData[idx];
+    var totalSteps = 150;
+    var stepCount = 0;
+
+    // Toggle buttons
+    document.getElementById('sim-start').classList.add('hidden');
+    document.getElementById('sim-stop').classList.remove('hidden');
+    document.getElementById('sim-info').classList.remove('hidden');
+    document.getElementById('sim-select').disabled = true;
+
+    // Fill info panel
+    document.getElementById('sim-driver-name').textContent = data.driver_name;
+    document.getElementById('sim-vehicle-info').textContent = data.vehicle_plate + '  \u00B7  ' + Number(data.volume).toLocaleString('id-ID') + 'L ' + data.fuel_name;
+    document.getElementById('sim-destination').textContent = data.spbu_name;
+    document.getElementById('sim-dest-label').textContent = '\uD83C\uDFC1 ' + data.spbu_name;
+    document.getElementById('sim-progress-bar').style.width = '0%';
+    document.getElementById('sim-percent').textContent = '0%';
+    document.getElementById('sim-percent').className = 'text-xs font-black text-red-600 dark:text-red-400 min-w-[42px] text-right';
+
+    // Depo marker
+    depoMarker = L.marker([DEPO.lat, DEPO.lng], { icon: buildDepoIcon(), zIndexOffset: 900 })
+        .bindPopup('<div style="min-width:150px"><p class="map-popup-title">\uD83C\uDFED ' + DEPO.name + '</p><p class="map-popup-row">Titik Keberangkatan Depo</p></div>')
+        .addTo(map);
+
+    // Route line (dashed - full route)
+    routeLine = L.polyline([[DEPO.lat, DEPO.lng], [data.dest_lat, data.dest_lng]], {
+        color: '#dc2626', weight: 3, opacity: 0.3, dashArray: '10, 8',
+    }).addTo(map);
+
+    // Traveled line (solid - grows as truck moves)
+    traveledLine = L.polyline([[DEPO.lat, DEPO.lng]], {
+        color: '#dc2626', weight: 4, opacity: 0.8,
+    }).addTo(map);
+
+    // Truck marker
+    truckMarker = L.marker([DEPO.lat, DEPO.lng], { icon: buildTruckIcon(), zIndexOffset: 1000 })
+        .bindPopup('<div style="min-width:190px">'
+            + '<p class="map-popup-title">\uD83D\uDE9B ' + data.driver_name + '</p>'
+            + '<p class="map-popup-row">Plat: <strong>' + data.vehicle_plate + '</strong></p>'
+            + '<p class="map-popup-row">Muatan: <span class="map-popup-vol">' + Number(data.volume).toLocaleString('id-ID') + 'L ' + data.fuel_name + '</span></p>'
+            + '<hr style="margin:5px 0;border-color:#eee">'
+            + '<p class="map-popup-row">Tujuan: <strong>' + data.spbu_name + '</strong></p>'
+            + '</div>')
+        .addTo(map);
+
+    // Fit map to route
+    map.fitBounds(routeLine.getBounds(), { padding: [60, 60] });
+
+    // Animate movement
+    simInterval = setInterval(function() {
+        stepCount++;
+        var progress = Math.min(stepCount / totalSteps, 1);
+
+        // Ease-in-out for natural movement
+        var eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+        var lat = DEPO.lat + (data.dest_lat - DEPO.lat) * eased;
+        var lng = DEPO.lng + (data.dest_lng - DEPO.lng) * eased;
+
+        // Subtle wobble for road-like feel
+        var wobble = Math.sin(progress * Math.PI * 8) * 0.0004 * (1 - progress);
+
+        truckMarker.setLatLng([lat + wobble, lng + wobble * 0.7]);
+
+        // Grow traveled line
+        var coords = traveledLine.getLatLngs();
+        coords.push(L.latLng(lat + wobble, lng + wobble * 0.7));
+        traveledLine.setLatLngs(coords);
+
+        // Update progress bar
+        var pct = Math.round(progress * 100);
+        document.getElementById('sim-progress-bar').style.width = pct + '%';
+        document.getElementById('sim-percent').textContent = pct + '%';
+
+        if (stepCount >= totalSteps) {
+            clearInterval(simInterval);
+            simInterval = null;
+            onSimArrival(data);
+        }
+    }, 100);
+}
+
+function onSimArrival(data) {
+    if (truckMarker) truckMarker.setLatLng([data.dest_lat, data.dest_lng]);
+
+    // Arrival toast
+    var t = document.createElement('div');
+    t.className = 'fixed top-5 right-5 z-[999] flex items-center gap-3 px-5 py-4 bg-white border-2 border-emerald-400 shadow-2xl rounded-2xl text-sm';
+    t.style.animation = 'fadeIn 0.35s ease forwards';
+    t.innerHTML = '<div class="flex items-center justify-center w-11 h-11 text-xl bg-emerald-50 rounded-full shrink-0">\u2705</div>'
+        + '<div>'
+        + '<p class="font-bold text-emerald-600">Driver Tiba di Tujuan!</p>'
+        + '<p class="text-xs text-slate-500 mt-0.5">' + data.driver_name + ' (' + data.vehicle_plate + ') telah sampai di ' + data.spbu_name + '</p>'
+        + '</div>';
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 6000);
+
+    // Update buttons
+    document.getElementById('sim-stop').classList.add('hidden');
+    document.getElementById('sim-start').classList.remove('hidden');
+    document.getElementById('sim-start').innerHTML = '<span class="material-symbols-outlined text-[18px]">replay</span> Ulangi Simulasi';
+    document.getElementById('sim-select').disabled = false;
+    document.getElementById('sim-percent').textContent = '\u2705 Tiba';
+    document.getElementById('sim-percent').className = 'text-xs font-black text-emerald-600 min-w-[42px] text-right';
+}
+
+function stopSimulation() {
+    if (simInterval) { clearInterval(simInterval); simInterval = null; }
+    if (truckMarker) { map.removeLayer(truckMarker); truckMarker = null; }
+    if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+    if (traveledLine) { map.removeLayer(traveledLine); traveledLine = null; }
+    if (depoMarker) { map.removeLayer(depoMarker); depoMarker = null; }
+
+    document.getElementById('sim-start').classList.remove('hidden');
+    document.getElementById('sim-start').innerHTML = '<span class="material-symbols-outlined text-[18px]">play_arrow</span> Mulai Simulasi';
+    document.getElementById('sim-stop').classList.add('hidden');
+    document.getElementById('sim-info').classList.add('hidden');
+    document.getElementById('sim-select').disabled = false;
+    document.getElementById('sim-progress-bar').style.width = '0%';
+    document.getElementById('sim-percent').textContent = '0%';
+    document.getElementById('sim-percent').className = 'text-xs font-black text-red-600 dark:text-red-400 min-w-[42px] text-right';
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
     initMap(initialSpbus);
@@ -320,6 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initWebSocket();
     pollFallback();
     setInterval(pollFallback, 60000);
+    initSimDropdown();
 });
 </script>
 @endpush
